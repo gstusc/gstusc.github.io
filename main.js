@@ -171,7 +171,7 @@ class UniversalHeader extends HTMLElement {
                                 <li><a href="committee.html">Executive Committee</a></li>
                                 <li><a href="ce.html">Core Executives</a></li>
                                 <li><a href="standing-committee.html">Standing Committee</a></li>
-                                <li><a href="alumni.html">Alumni</a></li>
+                                <li><a href="alumni.html">Alumni Panel</a></li>
                                 <li><a href="teams.html">Teams</a></li>
                             </ul>
                         </li>
