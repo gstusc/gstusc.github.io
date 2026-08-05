@@ -165,7 +165,7 @@ class UniversalHeader extends HTMLElement {
                         <li><a href="events.html">Events</a></li>
                         <li><a href="achievement.html">Achievement</a></li>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-trigger">Committee <span class="dropdown-arrow">&#9662;</span></a>
+                            <a href="committee.html" class="dropdown-trigger">Committee <span class="dropdown-arrow">&#9662;</span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="advisor.html">Advisor Panel</a></li>
                                 <li><a href="committee.html">Executive Committee</a></li>
