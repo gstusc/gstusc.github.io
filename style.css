@@ -83,6 +83,19 @@ universal-footer {
     }
 }
 
+/* Prevent horizontal scrolling globally */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure padding/border don't push elements beyond 100% width */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
     position: relative;
     line-height: 1.6;
@@ -338,22 +351,35 @@ nav ul li a:hover, nav ul li a.active {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
     color: var(--text-light);
     padding: 40px 20px;
+    padding-left: 10%;
 }
 
 .interactive-glow-title {
-    font-size: 3.5rem;
-    margin-bottom: 15px;
-    letter-spacing: 1px;
-    position: relative;
-    display: inline-block;
-    color: rgba(255, 255, 255, 0.35);
-    cursor: pointer;
-    user-select: none;
-    transition: text-shadow 0.4s ease;
+    font-family: 'Montserrat', 'Arial Black', sans-serif;
+    font-weight: 900;
+    text-transform: none;           /* Allows uppercase GSTU with lowercase Science Club */
+    white-space: nowrap;            /* Keeps text on a single line */
+    letter-spacing: -0.8px;         /* Tight, clean letter spacing */
+    
+    /* Reduced font size scale (previously clamp(2.2rem, 4.5vw, 4rem)) */
+    font-size: clamp(1.8rem, 3.5vw, 3.2rem); 
+    
+    /* Left-to-right white to cyan gradient */
+    background: linear-gradient(90deg, #FFFFFF 0%, #E0F7FC 40%, #00D2FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    
+    /* Strips all glow, blur, and outer shadow effects */
+    text-shadow: none !important;
+    filter: none !important;
+    
+    margin-top: 15px;
+    margin-bottom: 20px;
 }
 
 .interactive-glow-title::after {
@@ -391,7 +417,7 @@ nav ul li a:hover, nav ul li a.active {
 /* Hero Stats Dashboard */
 .hero-stats {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 20px;
     flex-wrap: wrap;
     margin-top: 35px;
@@ -947,6 +973,25 @@ footer {
     color: #90a4ae;
     position: relative;
     z-index: 2;
+}
+
+/* Center Hero Section content on Mobile Devices */
+@media (max-width: 900px) {
+    #hero {
+        align-items: center !important;
+        text-align: center !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+
+    #hero p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-stats {
+        justify-content: center !important;
+    }
 }
 
 /* Responsive Media Viewports */
@@ -2192,4 +2237,77 @@ body.loading {
 @keyframes spin3D {
   from { transform: rotate3d(0.5, 0.5, 0.5, 360deg); }
   to { transform: rotate3d(0deg); }
+}
+
+/* Extended Hero Layout */
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 8%;
+  overflow: hidden;
+  background-color: #121212
+  color: #f3f4f6
+}
+
+#atom-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 520px;
+  pointer-events: none;
+}
+
+.hero-content * {
+  pointer-events: auto;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(135deg, #ffffff 30%, #00d2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.cta-btn {
+  display: inline-block;
+  padding: 0.85rem 2.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0b0f19;
+  background: #00d2ff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 25px rgba(0, 210, 255, 0.5);
+}
+
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px rgba(0, 210, 255, 0.8);
 }

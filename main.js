@@ -372,7 +372,6 @@ if (msgTrack && msgPrev && msgNext) {
         resetMsgAutoSlide();
     });
 
-    // Pause on hovering over the entire messages section container
     if (messagesSection) {
         messagesSection.addEventListener('mouseenter', stopMsgAutoSlide);
         messagesSection.addEventListener('mouseleave', startMsgAutoSlide);
@@ -497,7 +496,7 @@ class UniversalFooter extends HTMLElement {
                         <a href="https://www.facebook.com/GSTUSC" target="_blank" aria-label="Facebook"><img src="image/facebook.webp" width="35px" height="35px"></a>
                         <a href="https://www.linkedin.com/company/gstu-science-club" target="_blank" aria-label="LinkedIn"><img src="image/linkedin.webp" width="35px" height="35px"></a>
                         <a href="https://www.youtube.com/@gstuscienceclub" target="_blank" aria-label="YouTube"><img src="image/youtube.webp" width="35px" height="35px"></a>
-                        <a href="https://www.facebook.com/groups/bsmrstusc" target="_blank" aria-label="Facebook"><img src="image/facebook.webp" width="35px" height="35px"></a>
+                        <a href="https://www.facebook.com/groups/bsmrstusc" target="_blank" aria-label="Facebook Group"><img src="image/facebook.webp" width="35px" height="35px"></a>
                     </div>
                 </div>
             </div>
@@ -762,8 +761,8 @@ function startHeroCounters() {
 
         const target = +counter.getAttribute('data-target');
         const suffix = counter.getAttribute('data-suffix') || '';
-        const duration = 2000; // 2 seconds transition duration
-        const frameDuration = 1000 / 60; // 60 FPS frame calculation
+        const duration = 2000; 
+        const frameDuration = 1000 / 60; 
         const totalFrames = Math.round(duration / frameDuration);
 
         let frame = 0;
@@ -771,7 +770,6 @@ function startHeroCounters() {
         const countUp = setInterval(() => {
             frame++;
             const progress = frame / totalFrames;
-            // Ease-out formula for deceleration toward completion
             const currentCount = Math.round(target * (1 - Math.pow(1 - progress, 3)));
 
             counter.innerText = currentCount + suffix;
@@ -786,15 +784,12 @@ function startHeroCounters() {
 
 // --- INTERSECTION OBSERVER & GENERAL SCROLL REVEAL ---
 document.addEventListener('DOMContentLoaded', () => {
-
-    // Set initial hidden position on stat boxes so they don't show before loader finishes
     const heroStatBoxes = document.querySelectorAll('#hero .hero-stats .stat-box');
     heroStatBoxes.forEach((box) => {
         box.style.opacity = '0';
         box.style.transform = 'translateY(50px)';
     });
 
-    // Scroll Reveal Engine (Animate sections from down to up on scroll)
     const observerOptions = {
         root: null,
         rootMargin: '0px 0px -80px 0px',
@@ -846,7 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     details.style.display = '';
                 } else if (hasMatchInSection) {
                     details.style.display = '';
-                    details.open = true; // Automatically expand matching accordion
+                    details.open = true; 
                     hasGlobalMatches = true;
                 } else {
                     details.style.display = 'none';
@@ -866,7 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================
-   SESSION-BASED PRELOADER LOGIC (2.5s MIN)
+   SESSION-BASED PRELOADER LOGIC
    ========================================== */
 window.addEventListener('load', () => {
   const loader = document.getElementById('loader-wrapper');
@@ -878,18 +873,15 @@ window.addEventListener('load', () => {
     }
     body.classList.remove('loading');
 
-    // Trigger hero box bouncing entrance and counter animations together after loader finishes
     animateHeroStatBoxes();
     startHeroCounters();
   };
 
-  // If user is refreshing in the same tab, unlock instantly
   if (sessionStorage.getItem('hasSeenLoaderThisSession')) {
     finishLoading();
     return;
   }
 
-  // Minimum duration: 2.5 seconds (2500ms)
   const MIN_DISPLAY_TIME = 2500; 
   const startTime = window.loaderStartTime || Date.now();
   const elapsedTime = Date.now() - startTime;
@@ -897,8 +889,380 @@ window.addEventListener('load', () => {
 
   setTimeout(() => {
     finishLoading();
-
-    // Save flag for this session only
     sessionStorage.setItem('hasSeenLoaderThisSession', 'true');
   }, remainingTime);
 });
+
+// --- HELPER FUNCTIONS FOR GLOW TEXTURES ---
+function createGlowTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+
+  const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+  gradient.addColorStop(0.2, 'rgba(255, 255, 255, 0.3)');
+  gradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.08)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 128, 128);
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+function createParticleTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext('2d');
+
+  const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.4)');
+  gradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.08)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 128, 128);
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+const glowTexture = createGlowTexture();
+const particleTexture = createParticleTexture();
+
+// --- THREE.JS ATOM CANVAS INITIALIZATION ---
+const canvas = document.getElementById('atom-canvas');
+if (canvas && typeof THREE !== 'undefined') {
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(
+    28,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+  controls.enableZoom = false;
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
+  scene.add(ambientLight);
+
+  const coreLight = new THREE.PointLight(0xff3366, 1.75, 25);
+  coreLight.position.set(0, 0, 0);
+  scene.add(coreLight);
+
+  const coreLightSecondary = new THREE.PointLight(0xffaa00, 1.18, 19);
+  coreLightSecondary.position.set(0, 0, 0);
+  scene.add(coreLightSecondary);
+
+  const cyanLight = new THREE.PointLight(0x00d2ff, 1.2, 30);
+  cyanLight.position.set(5, 5, 5);
+  scene.add(cyanLight);
+
+  const atomGroup = new THREE.Group();
+  atomGroup.position.set(0, -0.5, 0);
+
+  // Scale down the atom model to 90% of original size
+  atomGroup.scale.set(0.9, 0.9, 0.9);
+
+  scene.add(atomGroup);
+
+  function updateCameraView() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isMobile = w < 768;
+
+    camera.aspect = w / h;
+
+    if (isMobile) {
+      camera.position.set(0, 0, 40);
+      camera.setViewOffset(w, h, 0, -h * 0.12, w, h);
+    } else {
+      camera.position.set(0, 0, 30);
+      camera.setViewOffset(w, h, -w * 0.23, 0, w, h);
+    }
+
+    camera.updateProjectionMatrix();
+  }
+  updateCameraView();
+
+  // Nucleus
+  const nucleusGroup = new THREE.Group();
+  const particleGeo = new THREE.SphereGeometry(0.32, 16, 16);
+
+  const mat1 = new THREE.MeshStandardMaterial({
+    color: 0xee2255,
+    roughness: 0.3,
+    metalness: 0.7,
+    emissive: 0xcc0033,
+    emissiveIntensity: 0.74
+  });
+
+  const mat2 = new THREE.MeshStandardMaterial({
+    color: 0xee8800,
+    roughness: 0.3,
+    metalness: 0.7,
+    emissive: 0xcc5500,
+    emissiveIntensity: 0.74
+  });
+
+  const count = 26;
+  for (let i = 0; i < count; i++) {
+    const mesh = new THREE.Mesh(particleGeo, i % 2 === 0 ? mat1 : mat2);
+    const phi = Math.acos(-1 + (2 * i) / count);
+    const theta = Math.sqrt(count * Math.PI) * phi;
+    const r = 0.75;
+
+    mesh.position.set(
+      r * Math.cos(theta) * Math.sin(phi) + (Math.random() - 0.5) * 0.15,
+      r * Math.sin(theta) * Math.sin(phi) + (Math.random() - 0.5) * 0.15,
+      r * Math.cos(phi) + (Math.random() - 0.5) * 0.15
+    );
+    nucleusGroup.add(mesh);
+  }
+
+  const nucleusGlowMat = new THREE.SpriteMaterial({
+    map: glowTexture,
+    color: 0xff3366,
+    transparent: true,
+    opacity: 0.52,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+  const nucleusGlowSprite = new THREE.Sprite(nucleusGlowMat);
+  nucleusGlowSprite.scale.set(3.2, 3.2, 3.2);
+  nucleusGroup.add(nucleusGlowSprite);
+
+  atomGroup.add(nucleusGroup);
+
+  // Quantum Probability Electron Cloud
+  const cloudParticlesCount = 6500;
+  const cloudGeometry = new THREE.BufferGeometry();
+  const cloudPositions = new Float32Array(cloudParticlesCount * 3);
+  const cloudColors = new Float32Array(cloudParticlesCount * 3);
+
+  const colorBlue = new THREE.Color(0x00d2ff);
+  const colorPurple = new THREE.Color(0x8800ff);
+
+  for (let i = 0; i < cloudParticlesCount; i++) {
+    const u = Math.random();
+    const radius = 2.0 + Math.pow(u, 2) * 5.0;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((Math.random() * 2) - 1);
+
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.sin(phi) * Math.sin(theta);
+    const z = radius * Math.cos(phi);
+
+    cloudPositions[i * 3] = x;
+    cloudPositions[i * 3 + 1] = y;
+    cloudPositions[i * 3 + 2] = z;
+
+    const mixedColor = colorBlue.clone().lerp(colorPurple, radius / 7.0);
+    cloudColors[i * 3] = mixedColor.r;
+    cloudColors[i * 3 + 1] = mixedColor.g;
+    cloudColors[i * 3 + 2] = mixedColor.b;
+  }
+
+  cloudGeometry.setAttribute('position', new THREE.BufferAttribute(cloudPositions, 3));
+  cloudGeometry.setAttribute('color', new THREE.BufferAttribute(cloudColors, 3));
+
+  const cloudMaterial = new THREE.PointsMaterial({
+    size: 0.05,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.35,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending
+  });
+
+  const quantumCloud = new THREE.Points(cloudGeometry, cloudMaterial);
+  atomGroup.add(quantumCloud);
+
+  // Orbital System
+  const ringsData = [
+    { radius: 3.8, color: 0xffb040, tailColor: 0xff2200, speed: 6.5, rotX: 0.7, rotY: 0.5, rotZ: 0.2, electrons: 2 },
+    { radius: 5.2, color: 0x00e5ff, tailColor: 0x0033cc, speed: 5.0, rotX: -0.8, rotY: 1.2, rotZ: -0.4, electrons: 4 },
+    { radius: 6.5, color: 0x33ff88, tailColor: 0x006622, speed: 3.8, rotX: 1.1, rotY: -0.6, rotZ: 0.7, electrons: 4 },
+    { radius: 7.8, color: 0xff33aa, tailColor: 0x660044, speed: 2.8, rotX: -0.4, rotY: -1.1, rotZ: -0.5, electrons: 4 }
+  ];
+
+  const electronInstances = [];
+  const electronCoreGeo = new THREE.SphereGeometry(0.12, 16, 16);
+
+  ringsData.forEach((data) => {
+    const orbitPivot = new THREE.Group();
+    orbitPivot.rotation.set(data.rotX, data.rotY, data.rotZ);
+    atomGroup.add(orbitPivot);
+
+    const segments = 128;
+    const points = [];
+    for (let i = 0; i <= segments; i++) {
+      const theta = (i / segments) * Math.PI * 2;
+      points.push(new THREE.Vector3(Math.cos(theta) * data.radius, 0, Math.sin(theta) * data.radius));
+    }
+
+    const orbitGeo = new THREE.BufferGeometry().setFromPoints(points);
+
+    const continuousMat = new THREE.LineBasicMaterial({
+      color: data.color,
+      linewidth: 1.5,
+      transparent: true,
+      opacity: 0.20,
+      depthTest: false,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+
+    const continuousOrbitLine = new THREE.Line(orbitGeo, continuousMat);
+    continuousOrbitLine.renderOrder = 999;
+    orbitPivot.add(continuousOrbitLine);
+
+    const baseColor = new THREE.Color(data.color);
+    const warmTailColor = new THREE.Color(data.tailColor);
+
+    for (let j = 0; j < data.electrons; j++) {
+      const trailParticlesCount = 240; 
+      const trailGeo = new THREE.BufferGeometry();
+      const trailPositions = new Float32Array(trailParticlesCount * 3);
+      const trailColors = new Float32Array(trailParticlesCount * 3);
+      const trailSizes = new Float32Array(trailParticlesCount);
+
+      trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+      trailGeo.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
+      trailGeo.setAttribute('size', new THREE.BufferAttribute(trailSizes, 1));
+
+      const trailMat = new THREE.PointsMaterial({
+        size: 0.65,
+        map: particleTexture,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.65,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+
+      const trailPoints = new THREE.Points(trailGeo, trailMat);
+      orbitPivot.add(trailPoints);
+
+      const electronPivot = new THREE.Group();
+      
+      const coreMesh = new THREE.Mesh(
+        electronCoreGeo, 
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      );
+      electronPivot.add(coreMesh);
+
+      const spriteMat = new THREE.SpriteMaterial({
+        map: glowTexture,
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.7,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+      const glowSprite = new THREE.Sprite(spriteMat);
+      glowSprite.scale.set(1.1, 1.1, 1.1);
+      electronPivot.add(glowSprite);
+
+      orbitPivot.add(electronPivot);
+
+      const startAngle = (j / data.electrons) * Math.PI * 2;
+
+      electronInstances.push({
+        pivot: electronPivot,
+        trailPoints: trailPoints,
+        trailPositions: trailPositions,
+        trailColors: trailColors,
+        trailSizes: trailSizes,
+        trailParticlesCount: trailParticlesCount,
+        radius: data.radius,
+        speed: data.speed,
+        angle: startAngle,
+        baseColor: baseColor,
+        warmTailColor: warmTailColor
+      });
+    }
+  });
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+
+    atomGroup.rotation.y = elapsedTime * 0.12;
+    quantumCloud.rotation.x = elapsedTime * 0.05;
+    quantumCloud.rotation.y = -elapsedTime * 0.08;
+
+    nucleusGroup.rotation.x = elapsedTime * 0.4;
+    nucleusGroup.rotation.y = elapsedTime * 0.5;
+
+    const nucleusPulse = Math.sin(elapsedTime * 2.5) * 0.2 + 3.2;
+    nucleusGlowSprite.scale.set(nucleusPulse, nucleusPulse, nucleusPulse);
+
+    electronInstances.forEach((e) => {
+      e.angle += 0.007 * e.speed;
+
+      const headX = Math.cos(e.angle) * e.radius;
+      const headZ = Math.sin(e.angle) * e.radius;
+      e.pivot.position.set(headX, 0, headZ);
+
+      const trailArcLength = 1.8;
+
+      for (let i = 0; i < e.trailParticlesCount; i++) {
+        const t = i / (e.trailParticlesCount - 1);
+        const trailAngle = e.angle - t * trailArcLength;
+
+        const px = Math.cos(trailAngle) * e.radius;
+        const py = 0;
+        const pz = Math.sin(trailAngle) * e.radius;
+
+        e.trailPositions[i * 3] = px;
+        e.trailPositions[i * 3 + 1] = py;
+        e.trailPositions[i * 3 + 2] = pz;
+
+        let color = new THREE.Color();
+        if (t < 0.1) {
+          color.set(0xffffff).lerp(e.baseColor, t / 0.1);
+        } else {
+          const blendFactor = (t - 0.1) / 0.9;
+          color.copy(e.baseColor).lerp(e.warmTailColor, blendFactor);
+        }
+
+        const fade = Math.sin((1.0 - t) * Math.PI * 0.5);
+        const alphaCurve = Math.pow(fade, 2.2);
+
+        e.trailColors[i * 3] = color.r * alphaCurve;
+        e.trailColors[i * 3 + 1] = color.g * alphaCurve;
+        e.trailColors[i * 3 + 2] = color.b * alphaCurve;
+
+        const taper = Math.sin(Math.pow(1.0 - t, 0.5) * Math.PI) * 0.6;
+        e.trailSizes[i] = Math.max(taper, 0.01);
+      }
+
+      e.trailPoints.geometry.attributes.position.needsUpdate = true;
+      e.trailPoints.geometry.attributes.color.needsUpdate = true;
+    });
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    updateCameraView();
+  });
+}
