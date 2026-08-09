@@ -2083,3 +2083,113 @@ section p[style*="color: #a7b0c1"] {
 [data-theme="dark"] .list-table tr:hover {
     background-color: rgba(255, 255, 255, 0.04);
 }
+
+/* ==========================================
+   SESSION PRELOADER STYLES
+   ========================================== */
+
+/* Lock body scrolling while loader is active */
+body.loading {
+  overflow: hidden;
+}
+
+/* Instantly suppress loader on page refresh */
+.skip-loader #loader-wrapper {
+  display: none !important;
+}
+
+/* Fullscreen Loader Overlay */
+#loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #1d2630;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999; /* Ensures loader stays above all other page elements */
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+}
+
+/* Smooth Fade-Out State */
+#loader-wrapper.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Optional Pulse Text */
+.loading-text {
+  margin-top: 20px;
+  color: #91daff;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  animation: pulseText 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulseText {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* Spinner Styles */
+.spinner-box {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  position: relative;
+}
+
+.leo {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.blue-orbit {
+  width: 165px;
+  height: 165px;
+  border: 1px solid #91daffa0;
+  animation: spin3D 2s linear infinite;
+}
+
+.green-orbit {
+  width: 120px;
+  height: 120px;
+  border: 1px solid #91ffbfa0;
+  animation: spin3D 6s linear infinite;
+}
+
+.red-orbit {
+  width: 90px;
+  height: 90px;
+  border: 1px dotted #ffca91a0;
+  animation: spin3D 1s linear infinite;
+}
+
+.white-orbit {
+  width: 60px;
+  height: 60px;
+  border: 2px solid #ffffff;
+  animation: spin3D 4s linear infinite;
+}
+
+.w1 { transform: rotate3d(1, 1, 1, 90deg); }
+.w2 { transform: rotate3d(1, 2, 1, 90deg); }
+.w3 { transform: rotate3d(0, 1, 1, 90deg); }
+
+@keyframes spin3D {
+  from { transform: rotate3d(0.5, 0.5, 0.5, 360deg); }
+  to { transform: rotate3d(0deg); }
+}

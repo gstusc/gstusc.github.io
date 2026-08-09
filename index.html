@@ -1,22 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+  // Skip loader if the user is just refreshing the page in the same session
+  if (sessionStorage.getItem('hasSeenLoaderThisSession')) {
+    document.documentElement.classList.add('skip-loader');
+  }
+  // Record the start time of the load
+  window.loaderStartTime = Date.now();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - GSTU Science Club</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Custom Font Stylesheet -->
+    <link rel="stylesheet" href="fonts/basenji.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="loading">
 
+<!-- PRELOADER OVERLAY -->
+  <div id="loader-wrapper">
+    <div class="spinner-box">
+      <div class="blue-orbit leo"></div>
+      <div class="green-orbit leo"></div>
+      <div class="red-orbit leo"></div>
+      <div class="white-orbit w1 leo"></div>
+      <div class="white-orbit w2 leo"></div>
+      <div class="white-orbit w3 leo"></div>
+    </div>
+    <div class="loading-text">Preparing for Discovery...</div>
+  </div>
+    
     <universal-header></universal-header>
 
     <section id="hero">
-        <img src="image/logo.webp" height="150px" width="150px" alt="GSTU Science Club Logo">
-        
-        <h1 class="interactive-glow-title" data-text="GSTU Science Club">GSTU Science Club</h1>
-        
-        <h3>Apply Your Idea</h3> <br>
-        <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Your journey into the unknown starts here.</p>
+       <img src="image/logo.webp" height="150px" width="150px" alt="GSTU Science Club Logo">
+    
+    <!-- Basenji font applied via .interactive-glow-title -->
+    <h1 class="interactive-glow-title" data-text="GSTU Science Club">GSTU Science Club</h1>
+    
+    <h3>Apply Your Idea</h3> <br>
+    <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Your journey into the unknown starts here.</p>
         
         <div class="hero-stats">
             <div class="stat-box">

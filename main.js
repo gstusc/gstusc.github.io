@@ -490,7 +490,9 @@ class UniversalFooter extends HTMLElement {
                 
                 <div class="footer-col">
                     <h3>Connect With Us</h3>
-                    <p>Follow our news feeds for instant updates on current hackathons and assignments.</p>
+                    <p>Follow our news feeds for instant updates on current hackathons and assignments.</p> <br>
+                    <p>President: +880 1602-337216</p>
+                    <p>General Secretary: +880 1746-739437</p>
                     <div class="social-links">
                         <a href="https://www.facebook.com/GSTUSC" target="_blank" aria-label="Facebook"><img src="image/facebook.webp" width="35px" height="35px"></a>
                         <a href="https://www.linkedin.com/company/gstu-science-club" target="_blank" aria-label="LinkedIn"><img src="image/linkedin.webp" width="35px" height="35px"></a>
@@ -736,27 +738,28 @@ if (galleryModal && modalImg && modalClose) {
     });
 }
 
-// --- INTERSECTION OBSERVER & HERO STATS ANIMATION ---
-document.addEventListener('DOMContentLoaded', () => {
-
-    // 1. Auto-Animate Hero 4 Stat Boxes Entry on Load
+// --- HERO STAT BOXES BOUNCE & ENTRY ANIMATION ---
+function animateHeroStatBoxes() {
     const heroStatBoxes = document.querySelectorAll('#hero .hero-stats .stat-box');
     
     heroStatBoxes.forEach((box, index) => {
-        box.style.opacity = '0';
-        box.style.transform = 'translateY(50px)';
-        box.style.transition = 'opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        box.style.transition = 'opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
         
         setTimeout(() => {
             box.style.opacity = '1';
             box.style.transform = 'translateY(0)';
-        }, 200 + (index * 150));
+        }, index * 150);
     });
+}
 
-    // 2. Animated Counter Logic for Numbers (.counter)
+// --- HERO COUNTER ANIMATION ENGINE ---
+function startHeroCounters() {
     const counters = document.querySelectorAll('.counter');
 
-    const animateCounter = (counter) => {
+    counters.forEach((counter) => {
+        if (counter.classList.contains('counted')) return;
+        counter.classList.add('counted');
+
         const target = +counter.getAttribute('data-target');
         const suffix = counter.getAttribute('data-suffix') || '';
         const duration = 2000; // 2 seconds transition duration
@@ -778,20 +781,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(countUp);
             }
         }, frameDuration);
-    };
+    });
+}
 
-    const counterObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                animateCounter(entry.target);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.4 });
+// --- INTERSECTION OBSERVER & GENERAL SCROLL REVEAL ---
+document.addEventListener('DOMContentLoaded', () => {
 
-    counters.forEach((counter) => counterObserver.observe(counter));
+    // Set initial hidden position on stat boxes so they don't show before loader finishes
+    const heroStatBoxes = document.querySelectorAll('#hero .hero-stats .stat-box');
+    heroStatBoxes.forEach((box) => {
+        box.style.opacity = '0';
+        box.style.transform = 'translateY(50px)';
+    });
 
-    // 3. Scroll Reveal Engine (Animate sections from down to up on scroll)
+    // Scroll Reveal Engine (Animate sections from down to up on scroll)
     const observerOptions = {
         root: null,
         rootMargin: '0px 0px -80px 0px',
@@ -860,4 +863,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+});
+
+/* ==========================================
+   SESSION-BASED PRELOADER LOGIC (2.5s MIN)
+   ========================================== */
+window.addEventListener('load', () => {
+  const loader = document.getElementById('loader-wrapper');
+  const body = document.body;
+
+  const finishLoading = () => {
+    if (loader) {
+      loader.classList.add('fade-out');
+    }
+    body.classList.remove('loading');
+
+    // Trigger hero box bouncing entrance and counter animations together after loader finishes
+    animateHeroStatBoxes();
+    startHeroCounters();
+  };
+
+  // If user is refreshing in the same tab, unlock instantly
+  if (sessionStorage.getItem('hasSeenLoaderThisSession')) {
+    finishLoading();
+    return;
+  }
+
+  // Minimum duration: 2.5 seconds (2500ms)
+  const MIN_DISPLAY_TIME = 2500; 
+  const startTime = window.loaderStartTime || Date.now();
+  const elapsedTime = Date.now() - startTime;
+  const remainingTime = Math.max(0, MIN_DISPLAY_TIME - elapsedTime);
+
+  setTimeout(() => {
+    finishLoading();
+
+    // Save flag for this session only
+    sessionStorage.setItem('hasSeenLoaderThisSession', 'true');
+  }, remainingTime);
 });
