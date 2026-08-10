@@ -3,6 +3,8 @@ function initializeParticles(containerElement, canvasElement) {
     if (!containerElement || !canvasElement) return;
     const ctx = canvasElement.getContext('2d');
     let particlesArray = [];
+    let animationFrameId = null;
+    let resizeTimeout = null;
     
     const mouse = {
         x: null,
@@ -16,16 +18,24 @@ function initializeParticles(containerElement, canvasElement) {
         initParticles();
     }
 
-    containerElement.addEventListener('mousemove', (e) => {
+    function debouncedResize() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(resizeCanvas, 150);
+    }
+
+    const handleMouseMove = (e) => {
         const rect = containerElement.getBoundingClientRect();
         mouse.x = e.clientX - rect.left;
         mouse.y = e.clientY - rect.top;
-    });
+    };
 
-    containerElement.addEventListener('mouseleave', () => {
+    const handleMouseLeave = () => {
         mouse.x = null;
         mouse.y = null;
-    });
+    };
+
+    containerElement.addEventListener('mousemove', handleMouseMove);
+    containerElement.addEventListener('mouseleave', handleMouseLeave);
 
     class Particle {
         constructor(x, y, directionX, directionY, size, color) {
@@ -80,7 +90,6 @@ function initializeParticles(containerElement, canvasElement) {
             let x = Math.random() * (canvasElement.width - size * 2) + size;
             let y = Math.random() * (canvasElement.height - size * 2) + size;
             
-            // Random speed and unlinked 360-degree direction vector
             let speed = Math.random() * 0.6 + 0.2;
             let angle = Math.random() * Math.PI * 2;
             
@@ -94,7 +103,7 @@ function initializeParticles(containerElement, canvasElement) {
     }
 
     function animate() {
-        requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
         ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
         for (let i = 0; i < particlesArray.length; i++) {
@@ -106,7 +115,7 @@ function initializeParticles(containerElement, canvasElement) {
     function connectNodes() {
         let maxDistance = 65;
         for (let a = 0; a < particlesArray.length; a++) {
-            for (let b = a; b < particlesArray.length; b++) {
+            for (let b = a + 1; b < particlesArray.length; b++) {
                 let dx = particlesArray[a].x - particlesArray[b].x;
                 let dy = particlesArray[a].y - particlesArray[b].y;
                 let distance = Math.sqrt(dx * dx + dy * dy);
@@ -124,9 +133,16 @@ function initializeParticles(containerElement, canvasElement) {
         }
     }
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', debouncedResize);
     resizeCanvas();
     animate();
+
+    return function cleanup() {
+        window.removeEventListener('resize', debouncedResize);
+        containerElement.removeEventListener('mousemove', handleMouseMove);
+        containerElement.removeEventListener('mouseleave', handleMouseLeave);
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
 }
 
 class UniversalHeader extends HTMLElement {
@@ -199,7 +215,7 @@ class UniversalHeader extends HTMLElement {
             navMenu.classList.toggle('open');
         });
 
-        document.addEventListener('click', (e) => {
+        this._outsideClickHandler = (e) => {
             if (navMenu && navMenu.classList.contains('open')) {
                 if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
                     navMenu.classList.remove('open');
@@ -212,7 +228,8 @@ class UniversalHeader extends HTMLElement {
                     }
                 }
             }
-        });
+        };
+        document.addEventListener('click', this._outsideClickHandler);
 
         dropdownTrigger.addEventListener('click', (e) => {
             if (window.innerWidth <= 900) {
@@ -260,7 +277,7 @@ class UniversalHeader extends HTMLElement {
         }
         
         let isSubPageActive = false;
-        const committeeSubPages = ["advisor.html", "standing-committee.html", "committee.html", "alumni.html", "teams.html"];
+        const committeeSubPages = ["advisor.html", "standing-committee.html", "committee.html", "ce.html", "alumni.html", "teams.html"];
 
         links.forEach(link => {
             const linkHref = link.getAttribute('href');
@@ -278,7 +295,16 @@ class UniversalHeader extends HTMLElement {
 
         const headerContainer = this.querySelector('header');
         const headerCanvas = this.querySelector('.particle-canvas');
-        initializeParticles(headerContainer, headerCanvas);
+        this._particleCleanup = initializeParticles(headerContainer, headerCanvas);
+    }
+
+    disconnectedCallback() {
+        if (this._outsideClickHandler) {
+            document.removeEventListener('click', this._outsideClickHandler);
+        }
+        if (this._particleCleanup) {
+            this._particleCleanup();
+        }
     }
 }
 
@@ -319,6 +345,7 @@ if (msgTrack && msgPrev && msgNext) {
     }
 
     function updateMsgSlider() {
+        if (msgCards.length === 0) return;
         const cardWidth = msgCards[0].offsetWidth;
         const gap = 20;
         
@@ -389,14 +416,16 @@ if (msgTrack && msgPrev && msgNext) {
         });
     }
 
-    msgViewport.addEventListener('touchstart', touchStart);
-    msgViewport.addEventListener('touchend', touchEnd);
-    msgViewport.addEventListener('touchmove', touchMove);
+    if (msgViewport) {
+        msgViewport.addEventListener('touchstart', touchStart);
+        msgViewport.addEventListener('touchend', touchEnd);
+        msgViewport.addEventListener('touchmove', touchMove);
 
-    msgViewport.addEventListener('mousedown', touchStart);
-    msgViewport.addEventListener('mouseup', touchEnd);
-    msgViewport.addEventListener('mouseleave', () => { if (isDragging) touchEnd(); });
-    msgViewport.addEventListener('mousemove', touchMove);
+        msgViewport.addEventListener('mousedown', touchStart);
+        msgViewport.addEventListener('mouseup', touchEnd);
+        msgViewport.addEventListener('mouseleave', () => { if (isDragging) touchEnd(); });
+        msgViewport.addEventListener('mousemove', touchMove);
+    }
 
     function touchStart(e) {
         isDragging = true;
@@ -509,7 +538,13 @@ class UniversalFooter extends HTMLElement {
 
         const footerContainer = this.querySelector('footer');
         const footerCanvas = this.querySelector('.particle-canvas');
-        initializeParticles(footerContainer, footerCanvas);
+        this._particleCleanup = initializeParticles(footerContainer, footerCanvas);
+    }
+
+    disconnectedCallback() {
+        if (this._particleCleanup) {
+            this._particleCleanup();
+        }
     }
 }
 
@@ -581,6 +616,8 @@ if (track && prevBtn && nextBtn) {
 
     function updateSliderPosition() {
         const items = track.querySelectorAll('.gallery-item');
+        if (items.length === 0) return;
+
         const totalColumns = Math.ceil(items.length / 2); 
         const columnsPerView = getItemsPerView();
         const maxIndex = Math.max(0, totalColumns - columnsPerView);
@@ -930,12 +967,12 @@ function createParticleTexture() {
   return new THREE.CanvasTexture(canvas);
 }
 
-const glowTexture = createGlowTexture();
-const particleTexture = createParticleTexture();
-
 // --- THREE.JS ATOM CANVAS INITIALIZATION ---
-const canvas = document.getElementById('atom-canvas');
-if (canvas && typeof THREE !== 'undefined') {
+const atomCanvas = document.getElementById('atom-canvas');
+if (atomCanvas && typeof THREE !== 'undefined') {
+  const glowTexture = createGlowTexture();
+  const particleTexture = createParticleTexture();
+
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(
@@ -945,14 +982,17 @@ if (canvas && typeof THREE !== 'undefined') {
     1000
   );
 
-  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({ canvas: atomCanvas, antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.enableZoom = false;
+  let controls = null;
+  if (typeof THREE.OrbitControls !== 'undefined') {
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.enableZoom = false;
+  }
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.45);
   scene.add(ambientLight);
@@ -970,11 +1010,8 @@ if (canvas && typeof THREE !== 'undefined') {
   scene.add(cyanLight);
 
   const atomGroup = new THREE.Group();
-  atomGroup.position.set(0, -0.5, 0);
-
-  // Scale down the atom model to 90% of original size
+  atomGroup.position.set(0, 0.5, 0);
   atomGroup.scale.set(0.9, 0.9, 0.9);
-
   scene.add(atomGroup);
 
   function updateCameraView() {
@@ -1028,6 +1065,16 @@ if (canvas && typeof THREE !== 'undefined') {
       r * Math.sin(theta) * Math.sin(phi) + (Math.random() - 0.5) * 0.15,
       r * Math.cos(phi) + (Math.random() - 0.5) * 0.15
     );
+
+    mesh.userData.radius = mesh.position.length();
+
+    mesh.userData.axis = new THREE.Vector3(
+      Math.random() - 0.5,
+      Math.random() - 0.5,
+      Math.random() - 0.5
+    ).normalize();
+    mesh.userData.speed = 0.4 + Math.random() * 0.6;
+
     nucleusGroup.add(mesh);
   }
 
@@ -1195,24 +1242,66 @@ if (canvas && typeof THREE !== 'undefined') {
     }
   });
 
+  // --- MOUSE INTERACTION SETUP ---
+  let targetRotationX = 0;
+  let targetRotationY = 0;
+
+  const heroSection = document.getElementById('hero');
+  if (heroSection) {
+    heroSection.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      const normX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const normY = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+
+      targetRotationY = normX * 1.2; 
+      targetRotationX = normY * 0.8;
+    });
+
+    heroSection.addEventListener('mouseleave', () => {
+      targetRotationX = 0;
+      targetRotationY = 0;
+    });
+  }
+
   const clock = new THREE.Clock();
 
   function animate() {
     requestAnimationFrame(animate);
+    const delta = clock.getDelta();
     const elapsedTime = clock.getElapsedTime();
 
-    atomGroup.rotation.y = elapsedTime * 0.12;
-    quantumCloud.rotation.x = elapsedTime * 0.05;
-    quantumCloud.rotation.y = -elapsedTime * 0.08;
+    // Slowed overall model rotation
+    const desiredY = elapsedTime * 0.04 + targetRotationY;
+    
+    atomGroup.rotation.y += (desiredY - atomGroup.rotation.y) * 0.05;
+    atomGroup.rotation.x += (targetRotationX - atomGroup.rotation.x) * 0.05;
 
-    nucleusGroup.rotation.x = elapsedTime * 0.4;
-    nucleusGroup.rotation.y = elapsedTime * 0.5;
+    // Slowed quantum cloud rotation
+    quantumCloud.rotation.x = elapsedTime * 0.02;
+    quantumCloud.rotation.y = -elapsedTime * 0.03;
 
-    const nucleusPulse = Math.sin(elapsedTime * 2.5) * 0.2 + 3.2;
+    // Slowed nucleus rotation
+    nucleusGroup.rotation.x = elapsedTime * 0.15;
+    nucleusGroup.rotation.y = elapsedTime * 0.2;
+
+    nucleusGroup.children.forEach((child) => {
+      if (child.isMesh && child.userData.axis) {
+        // Slowed nucleon rotation speed
+        child.position.applyAxisAngle(child.userData.axis, child.userData.speed * delta * 0.5);
+        
+        const baseRadius = child.userData.radius;
+        const microPulse = Math.sin(elapsedTime * 1.5 + child.id) * 0.012;
+        child.position.setLength(baseRadius + microPulse);
+      }
+    });
+
+    // Slowed nucleus pulse
+    const nucleusPulse = Math.sin(elapsedTime * 1.2) * 0.2 + 3.2;
     nucleusGlowSprite.scale.set(nucleusPulse, nucleusPulse, nucleusPulse);
 
     electronInstances.forEach((e) => {
-      e.angle += 0.007 * e.speed;
+      // Slowed electron orbital speed
+      e.angle += 0.003 * e.speed;
 
       const headX = Math.cos(e.angle) * e.radius;
       const headZ = Math.sin(e.angle) * e.radius;
@@ -1255,7 +1344,7 @@ if (canvas && typeof THREE !== 'undefined') {
       e.trailPoints.geometry.attributes.color.needsUpdate = true;
     });
 
-    controls.update();
+    if (controls) controls.update();
     renderer.render(scene, camera);
   }
 

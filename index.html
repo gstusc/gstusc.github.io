@@ -35,16 +35,21 @@
     
     <universal-header></universal-header>
 
-    <section id="hero" style="text-align: left; align-items: flex-start; padding-left: 10%;">
-       <img src="image/logo.webp" height="180px" width="180px" alt="GSTU Science Club Logo" style="margin-top: -20px; margin-bottom: 10px;">
+<section id="hero">
+
+    <!-- BACKGROUND CANVAS -->
+    <canvas id="atom-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></canvas>
+
+    <!-- FOREGROUND CONTENT -->
+    <div class="hero-content" style="position: relative; z-index: 1; max-width: 800px;">
+        <img src="image/logo.webp" height="180px" width="180px" alt="GSTU Science Club Logo" style="margin-bottom: 10px;">
     
-    <!-- Basenji font applied via .interactive-glow-title -->
-    <h1 class="interactive-glow-title" data-text="GSTU Science Club">GSTU Science Club</h1>
-    
-    <h3>Apply Your Idea</h3> <br>
-    <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Your journey into the unknown starts here.</p>
+        <h1 class="hero-title">GSTU Science Club</h1>
+        <h3>Apply Your Idea</h3> <br>
+        <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Start your journey into the unknown from here . . . .</p>
         
-        <div class="hero-stats" style="justify-content: flex-start;">
+        <!-- STATS BOXES -->
+        <div class="hero-stats">
             <div class="stat-box">
                 <h2 class="counter" data-target="800" data-suffix="+">0</h2>
                 <p>Members</p>
@@ -62,9 +67,10 @@
                 <p>Achievements</p>
             </div>
         </div>
-        <canvas id="atom-canvas"></canvas>
-    </section>
+    </div>
 
+</section>
+    
     <div class="section-container reveal-on-scroll">
         <h2 class="section-title">Welcome to the Science Hub</h2>
         <p class="section-subtitle">The GSTU Science Club is a platform for curious minds. Click through our portal sections below to see who we are, what we build, and how you can get involved.</p>
