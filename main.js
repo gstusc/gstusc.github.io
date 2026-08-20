@@ -167,9 +167,9 @@ class UniversalHeader extends HTMLElement {
         <header>
             <canvas class="particle-canvas"></canvas>
             <div class="nav-container">
-                <a href="index.html" class="logo"> <img src="image/logo.webp" height="35px" width="35px"> GSTU Science Club</a>
+                <a href="index.html" class="logo"> <img src="image/logo.webp" height="35px" width="35px" alt="GSTU SC Logo"> GSTU Science Club</a>
                 
-                <button class="menu-toggle" aria-label="Toggle Navigation Menu" style="display: none;">
+                <button class="menu-toggle" aria-label="Toggle Navigation Menu">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -209,11 +209,13 @@ class UniversalHeader extends HTMLElement {
         const dropdownTrigger = this.querySelector('.dropdown-trigger');
         const dropdownMenu = this.querySelector('.dropdown-menu');
 
-        menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            menuToggle.classList.toggle('open');
-            navMenu.classList.toggle('open');
-        });
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                menuToggle.classList.toggle('open');
+                navMenu.classList.toggle('open');
+            });
+        }
 
         this._outsideClickHandler = (e) => {
             if (navMenu && navMenu.classList.contains('open')) {
@@ -231,17 +233,19 @@ class UniversalHeader extends HTMLElement {
         };
         document.addEventListener('click', this._outsideClickHandler);
 
-        dropdownTrigger.addEventListener('click', (e) => {
-            if (window.innerWidth <= 900) {
-                e.preventDefault(); 
-                dropdownMenu.classList.toggle('open');
-                
-                const arrow = dropdownTrigger.querySelector('.dropdown-arrow');
-                if(arrow) {
-                    arrow.style.transform = dropdownMenu.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        if (dropdownTrigger && dropdownMenu) {
+            dropdownTrigger.addEventListener('click', (e) => {
+                if (window.innerWidth <= 900) {
+                    e.preventDefault(); 
+                    dropdownMenu.classList.toggle('open');
+                    
+                    const arrow = dropdownTrigger.querySelector('.dropdown-arrow');
+                    if(arrow) {
+                        arrow.style.transform = dropdownMenu.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+                    }
                 }
-            }
-        });
+            });
+        }
 
         const themeBtn = this.querySelector('#themeToggleBtn');
         const themeIcon = themeBtn.querySelector('.theme-icon');
@@ -334,7 +338,7 @@ if (msgTrack && msgPrev && msgNext) {
             const dot = document.createElement('button');
             dot.classList.add('msg-dot');
             if (i === 0) dot.classList.add('active');
-            dot.setAttribute('aria-label', `Go to leader slide ${i + 1}`);
+            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
             dot.addEventListener('click', () => {
                 currentMsgIndex = i;
                 updateMsgSlider();
@@ -473,24 +477,12 @@ if (msgTrack && msgPrev && msgNext) {
 class UniversalFooter extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
-        <style>
-            .footer-logo-link {
-                display: flex !important;
-                justify-content: flex-start;
-                margin-bottom: 15px;
-            }
-            @media (max-width: 900px) {
-                .footer-logo-link {
-                    justify-content: center !important;
-                }
-            }
-        </style>
         <footer>
             <canvas class="particle-canvas"></canvas>
             <div class="footer-container">
                 <div class="footer-col">
                     <a href="index.html" class="logo footer-logo-link"> 
-                        <img src="image/logo.webp" height="60px" width="60px">
+                        <img src="image/logo.webp" height="60px" width="60px" alt="GSTU SC Logo">
                     </a>
                     <h3>GSTU Science Club</h3>
                     <p>Inspiring innovation, research, and technical excellence among the bright minds of GSTU. Your workspace to shape tomorrow.</p>
@@ -522,10 +514,10 @@ class UniversalFooter extends HTMLElement {
                     <p>President: +880 1602-337216</p>
                     <p>General Secretary: +880 1746-739437</p>
                     <div class="social-links">
-                        <a href="https://www.facebook.com/GSTUSC" target="_blank" aria-label="Facebook"><img src="image/facebook.webp" width="35px" height="35px"></a>
-                        <a href="https://www.linkedin.com/company/gstu-science-club" target="_blank" aria-label="LinkedIn"><img src="image/linkedin.webp" width="35px" height="35px"></a>
-                        <a href="https://www.youtube.com/@gstuscienceclub" target="_blank" aria-label="YouTube"><img src="image/youtube.webp" width="35px" height="35px"></a>
-                        <a href="https://www.facebook.com/groups/bsmrstusc" target="_blank" aria-label="Facebook Group"><img src="image/facebook.webp" width="35px" height="35px"></a>
+                        <a href="https://www.facebook.com/GSTUSC" target="_blank" aria-label="Facebook"><img src="image/facebook.webp" width="35px" height="35px" alt="Facebook"></a>
+                        <a href="https://www.linkedin.com/company/gstu-science-club" target="_blank" aria-label="LinkedIn"><img src="image/linkedin.webp" width="35px" height="35px" alt="LinkedIn"></a>
+                        <a href="https://www.youtube.com/@gstuscienceclub" target="_blank" aria-label="YouTube"><img src="image/youtube.webp" width="35px" height="35px" alt="YouTube"></a>
+                        <a href="https://www.facebook.com/groups/bsmrstusc" target="_blank" aria-label="Facebook Group"><img src="image/facebook.webp" width="35px" height="35px" alt="FB Group"></a>
                     </div>
                 </div>
             </div>
@@ -844,6 +836,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const elementsToReveal = document.querySelectorAll('.reveal-on-scroll');
     elementsToReveal.forEach(el => scrollObserver.observe(el));
+
+    // Bind dynamic cursor tracking for radial card overlays
+    const interactiveCards = document.querySelectorAll('.qa-item, .affiliation-wide-card, .message-card');
+    interactiveCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--x', `${x}px`);
+            card.style.setProperty('--y', `${y}px`);
+        });
+    });
 });
 
 // --- TEAMS SEARCH ENGINE FILTER LOGIC ---
@@ -1270,23 +1274,22 @@ if (atomCanvas && typeof THREE !== 'undefined') {
     const delta = clock.getDelta();
     const elapsedTime = clock.getElapsedTime();
 
-    // Slowed overall model rotation
+    // Model rotation
     const desiredY = elapsedTime * 0.04 + targetRotationY;
     
     atomGroup.rotation.y += (desiredY - atomGroup.rotation.y) * 0.05;
     atomGroup.rotation.x += (targetRotationX - atomGroup.rotation.x) * 0.05;
 
-    // Slowed quantum cloud rotation
+    // Quantum cloud rotation
     quantumCloud.rotation.x = elapsedTime * 0.02;
     quantumCloud.rotation.y = -elapsedTime * 0.03;
 
-    // Slowed nucleus rotation
+    // Nucleus rotation
     nucleusGroup.rotation.x = elapsedTime * 0.15;
     nucleusGroup.rotation.y = elapsedTime * 0.2;
 
     nucleusGroup.children.forEach((child) => {
       if (child.isMesh && child.userData.axis) {
-        // Slowed nucleon rotation speed
         child.position.applyAxisAngle(child.userData.axis, child.userData.speed * delta * 0.5);
         
         const baseRadius = child.userData.radius;
@@ -1295,12 +1298,11 @@ if (atomCanvas && typeof THREE !== 'undefined') {
       }
     });
 
-    // Slowed nucleus pulse
+    // Nucleus pulse
     const nucleusPulse = Math.sin(elapsedTime * 1.2) * 0.2 + 3.2;
     nucleusGlowSprite.scale.set(nucleusPulse, nucleusPulse, nucleusPulse);
 
     electronInstances.forEach((e) => {
-      // Slowed electron orbital speed
       e.angle += 0.003 * e.speed;
 
       const headX = Math.cos(e.angle) * e.radius;
