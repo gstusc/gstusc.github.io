@@ -167,7 +167,7 @@ class UniversalHeader extends HTMLElement {
         <header>
             <canvas class="particle-canvas"></canvas>
             <div class="nav-container">
-                <a href="index.html" class="logo"> <img src="image/logo.webp" height="35px" width="35px" alt="GSTU SC Logo"> GSTU Science Club</a>
+                <a href="index.html" class="logo"> <img src="image/official/logo.webp" height="35px" width="35px" alt="GSTU SC Logo"> GSTU Science Club</a>
                 
                 <button class="menu-toggle" aria-label="Toggle Navigation Menu">
                     <span></span>
@@ -185,6 +185,7 @@ class UniversalHeader extends HTMLElement {
                             <ul class="dropdown-menu">
                                 <li><a href="advisor.html">Advisor Panel</a></li>
                                 <li><a href="committee.html">Executive Committee</a></li>
+                                <li><a href="executives.html">Current Executives</a></li>
                                 <li><a href="ce.html">Core Executives</a></li>
                                 <li><a href="standing-committee.html">Standing Committee</a></li>
                                 <li><a href="alumni.html">Alumni Panel</a></li>
@@ -482,7 +483,7 @@ class UniversalFooter extends HTMLElement {
             <div class="footer-container">
                 <div class="footer-col">
                     <a href="index.html" class="logo footer-logo-link"> 
-                        <img src="image/logo.webp" height="60px" width="60px" alt="GSTU SC Logo">
+                        <img src="image/official/logo.webp" height="60px" width="60px" alt="GSTU SC Logo">
                     </a>
                     <h3>GSTU Science Club</h3>
                     <p>Inspiring innovation, research, and technical excellence among the bright minds of GSTU. Your workspace to shape tomorrow.</p>
@@ -514,10 +515,10 @@ class UniversalFooter extends HTMLElement {
                     <p>President: +880 1602-337216</p>
                     <p>General Secretary: +880 1746-739437</p>
                     <div class="social-links">
-                        <a href="https://www.facebook.com/GSTUSC" target="_blank" aria-label="Facebook"><img src="image/facebook.webp" width="35px" height="35px" alt="Facebook"></a>
-                        <a href="https://www.linkedin.com/company/gstu-science-club" target="_blank" aria-label="LinkedIn"><img src="image/linkedin.webp" width="35px" height="35px" alt="LinkedIn"></a>
-                        <a href="https://www.youtube.com/@gstuscienceclub" target="_blank" aria-label="YouTube"><img src="image/youtube.webp" width="35px" height="35px" alt="YouTube"></a>
-                        <a href="https://www.facebook.com/groups/bsmrstusc" target="_blank" aria-label="Facebook Group"><img src="image/facebook.webp" width="35px" height="35px" alt="FB Group"></a>
+                        <a href="https://www.facebook.com/GSTUSC" target="_blank" aria-label="Facebook"><img src="image/official/facebook.webp" width="35px" height="35px" alt="Facebook"></a>
+                        <a href="https://www.linkedin.com/company/gstu-science-club" target="_blank" aria-label="LinkedIn"><img src="image/official/linkedin.webp" width="35px" height="35px" alt="LinkedIn"></a>
+                        <a href="https://www.youtube.com/@gstuscienceclub" target="_blank" aria-label="YouTube"><img src="image/official/youtube.webp" width="35px" height="35px" alt="YouTube"></a>
+                        <a href="https://www.facebook.com/groups/bsmrstusc" target="_blank" aria-label="Facebook Group"><img src="image/official/facebook.webp" width="35px" height="35px" alt="FB Group"></a>
                     </div>
                 </div>
             </div>
