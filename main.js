@@ -185,7 +185,6 @@ class UniversalHeader extends HTMLElement {
                             <ul class="dropdown-menu">
                                 <li><a href="advisor.html">Advisor Panel</a></li>
                                 <li><a href="committee.html">Executive Committee</a></li>
-                                <li><a href="executives.html">Current Executives</a></li>
                                 <li><a href="ce.html">Core Executives</a></li>
                                 <li><a href="standing-committee.html">Standing Committee</a></li>
                                 <li><a href="alumni.html">Alumni Panel</a></li>
@@ -1358,3 +1357,154 @@ if (atomCanvas && typeof THREE !== 'undefined') {
     updateCameraView();
   });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const track = document.getElementById('execTrack');
+    const prevBtn = document.getElementById('execPrev');
+    const nextBtn = document.getElementById('execNext');
+    const cards = track.querySelectorAll('.exec-card');
+
+    let currentIndex = 0;
+
+    function getVisibleCardsCount() {
+        return window.innerWidth <= 768 ? 1 : 3;
+    }
+
+    function updateSliderPosition() {
+        const visibleCards = getVisibleCardsCount();
+        const maxIndex = cards.length - visibleCards;
+        
+        if (currentIndex < 0) currentIndex = 0;
+        if (currentIndex > maxIndex) currentIndex = maxIndex;
+
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const gap = 20; // Matches flex gap
+        const offset = currentIndex * (cardWidth + gap);
+
+        track.style.transform = `translateX(-${offset}px)`;
+    }
+
+    nextBtn.addEventListener('click', () => {
+        const visibleCards = getVisibleCardsCount();
+        if (currentIndex < cards.length - visibleCards) {
+            currentIndex += visibleCards; // Advance by 3 cards
+            updateSliderPosition();
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        const visibleCards = getVisibleCardsCount();
+        if (currentIndex > 0) {
+            currentIndex -= visibleCards; // Retreat by 3 cards
+            updateSliderPosition();
+        }
+    });
+
+    window.addEventListener('resize', updateSliderPosition);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const wrapper = document.querySelector('.exec-slider-wrapper');
+    const track = document.getElementById('execTrack');
+    const prevBtn = document.getElementById('execPrev');
+    const nextBtn = document.getElementById('execNext');
+    const dotsContainer = document.getElementById('execDots');
+    const cards = track.querySelectorAll('.exec-card');
+
+    let currentStep = 0;
+    let autoSlideInterval = null;
+
+    function getVisibleCardsCount() {
+        return window.innerWidth <= 768 ? 1 : 3;
+    }
+
+    function getTotalSteps() {
+        return Math.ceil(cards.length / getVisibleCardsCount());
+    }
+
+    function createDots() {
+        dotsContainer.innerHTML = '';
+        const totalSteps = getTotalSteps();
+
+        for (let i = 0; i < totalSteps; i++) {
+            const dot = document.createElement('span');
+            dot.classList.add('dot');
+            if (i === currentStep) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                currentStep = i;
+                updateSliderPosition();
+                resetAutoSlide();
+            });
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function updateSliderPosition() {
+        const visibleCards = getVisibleCardsCount();
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const gap = 20;
+        
+        const offset = currentStep * visibleCards * (cardWidth + gap);
+        track.style.transform = `translateX(-${offset}px)`;
+
+        const dots = dotsContainer.querySelectorAll('.dot');
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === currentStep);
+        });
+    }
+
+    function nextSlide() {
+        if (currentStep < getTotalSteps() - 1) {
+            currentStep++;
+        } else {
+            currentStep = 0;
+        }
+        updateSliderPosition();
+    }
+
+    function prevSlide() {
+        if (currentStep > 0) {
+            currentStep--;
+        } else {
+            currentStep = getTotalSteps() - 1;
+        }
+        updateSliderPosition();
+    }
+
+    function startAutoSlide() {
+        if (!autoSlideInterval) {
+            autoSlideInterval = setInterval(nextSlide, 3000);
+        }
+    }
+
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = null;
+    }
+
+    function resetAutoSlide() {
+        stopAutoSlide();
+        startAutoSlide();
+    }
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoSlide();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoSlide();
+    });
+
+    wrapper.addEventListener('mouseenter', stopAutoSlide);
+    wrapper.addEventListener('mouseleave', startAutoSlide);
+
+    window.addEventListener('resize', () => {
+        createDots();
+        updateSliderPosition();
+    });
+
+    createDots();
+    startAutoSlide();
+});

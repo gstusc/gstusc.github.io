@@ -2466,111 +2466,189 @@ footer {
     display: none;
 }
 
-/* 4 Items per row on desktop */
-.exec-card {
-    flex: 0 0 calc(25% - 1.125rem);
+/* Section Base Container */
+#executive-committee-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     box-sizing: border-box;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 20px;
 }
 
-/* 1:1 Square Image */
-.executive-square-photo {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 1rem;
+.section-title {
+    color: #ffffff;
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.section-subtitle {
+    color: #b0bec5;
+    text-align: center;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+}
+
+/* Slider Wrapper */
+.exec-slider-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px; /* Space for side arrows */
+    box-sizing: border-box;
+}
+
+/* 3-Card Viewport (Padding added to prevent clipping on hover glow) */
+.exec-carousel-viewport {
     overflow: hidden;
-    border-radius: 8px;
+    width: 100%;
+    padding: 15px 0; /* Ensures hover glows stay visible */
+    margin: -15px 0;
+}
+
+.exec-carousel-track {
+    display: flex;
+    gap: 20px;
+    transition: transform 0.4s ease-in-out;
+}
+
+/* Card Container Base */
+.exec-carousel-track .exec-card {
+    flex: 0 0 calc((100% - 40px) / 3);
+    box-sizing: border-box;
+    background: #0f222e; /* Dark background default */
+    border-radius: 12px;
+    padding: 24px 15px;
+    text-align: center;
+    border: 1px solid rgba(0, 168, 232, 0.3);
+    cursor: pointer;
+    
+    /* Smooth transition for all color & glow interactions */
+    transition: background-color 0.35s ease, 
+                border-color 0.35s ease, 
+                box-shadow 0.35s ease;
+}
+
+/* Card Hover State (Full Bright Cyan Container Interaction) */
+.exec-carousel-track .exec-card:hover {
+    background-color: #00a8e8; /* Fills container with bright cyan on hover */
+    border-color: #33c2ff;
+    box-shadow: 0 0 25px rgba(0, 168, 232, 0.6); /* Cyan outer glow */
+}
+
+/* Square Photo Frame */
+.executive-square-photo {
+    width: 70%;
+    max-width: 150px;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    border: 2px solid #00a8e8;
+    overflow: hidden;
+    margin: 0 auto 16px auto;
+    background-color: #0d1b2a;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.exec-carousel-track .exec-card:hover .executive-square-photo {
+    border-color: #ffffff; /* Turns photo border white against cyan background */
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
 }
 
 .executive-square-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    display: block;
+    transition: transform 0.4s ease;
 }
 
+/* Photo Zoom Interaction */
+.exec-carousel-track .exec-card:hover .executive-square-photo img {
+    transform: scale(1.08);
+}
+
+/* Typography Color Interaction */
 .exec-card h3 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.1rem;
-    text-align: center;
+    color: #00a8e8; /* Base Cyan Title */
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 8px 0 4px 0;
+    transition: color 0.35s ease;
 }
 
-.exec-card .designation {
-    font-weight: bold;
+.exec-carousel-track .exec-card:hover h3 {
+    color: #ffffff; /* Turns white when hovered over filled cyan background */
+}
+
+.exec-designation {
+    color: #b0bec5; /* Base Muted Gray */
+    font-size: 0.85rem;
     margin: 0;
-    text-align: center;
-    color: var(--primary-color, #007bff);
+    transition: color 0.35s ease;
 }
 
-/* Navigation Buttons */
+.exec-carousel-track .exec-card:hover .exec-designation {
+    color: #e0f7ff; /* Soft ice-white for designation on hover */
+}
+
+/* Circular Navigation Buttons */
 .carousel-btn {
-    background: var(--card-bg, #ffffff);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    color: var(--text-color, #333);
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     width: 44px;
     height: 44px;
-    min-width: 44px;
     border-radius: 50%;
+    background-color: #00a8e8;
+    color: #ffffff;
+    border: none;
+    font-size: 1.2rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
-    transition: background 0.2s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    z-index: 2;
+    box-shadow: 0 4px 12px rgba(0, 168, 232, 0.3);
+    transition: all 0.2s ease;
+    z-index: 10;
 }
 
 .carousel-btn:hover {
-    background: var(--primary-color, #007bff);
-    color: #fff;
-    transform: scale(1.08);
+    background-color: #008cc2;
+    transform: translateY(-50%) scale(1.08);
 }
 
-@media (max-width: 1024px) {
-    .exec-card {
-        flex: 0 0 calc(33.333% - 1rem);
-    }
+.prev-btn { left: 0; }
+.next-btn { right: 0; }
+
+/* Bottom Dots Navigation */
+.gallery-carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 30px;
+    position: relative;
+    z-index: 10;
+}
+
+.gallery-carousel-dots .dot {
+    width: 8px;
+    height: 8px;
+    background-color: #2c475d;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gallery-carousel-dots .dot.active {
+    width: 24px;
+    border-radius: 10px;
+    background-color: #00a8e8;
 }
 
 @media (max-width: 768px) {
-    .exec-card {
-        flex: 0 0 calc(50% - 0.75rem);
-    }
+    .exec-slider-wrapper { padding: 0 45px; }
+    .exec-carousel-track .exec-card { flex: 0 0 100%; }
 }
-
-@media (max-width: 480px) {
-    .exec-card {
-        flex: 0 0 100%;
-    }
-}
-
-        /* Transparent outer box without background pattern or border */
-        .executive-division-box {
-            background: transparent !important;
-            background-image: none !important;
-            border: none !important;
-            box-shadow: none !important;
-            padding: 10px 0 30px 0;
-            margin-bottom: 20px;
-        }
-
-        /* Expanded flex grid layout */
-        .exec-flex-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: stretch;
-            gap: 2rem; /* Slightly wider spacing between cards */
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        /* Increased width for executive cards */
-        .exec-card {
-            flex: 0 1 300px; /* Increased base width from 240px to 300px */
-            max-width: 340px; /* Increased max width from 280px to 340px */
-            width: 100%;
-        }
