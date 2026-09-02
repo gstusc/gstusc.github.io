@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script>
-      // Skip loader if the user is just refreshing the page in the same session
-      if (sessionStorage.getItem('hasSeenLoaderThisSession')) {
-        document.documentElement.classList.add('skip-loader');
-      }
-      // Record the start time of the load
-      window.loaderStartTime = Date.now();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - GSTU Science Club</title>
     <link rel="stylesheet" href="style.css">
     <!-- Custom Font Stylesheet -->
     <link rel="stylesheet" href="fonts/basenji.css">
+    <link rel="stylesheet" href="style.css?v=1.1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <link rel="icon" type="image/webp" href="image/official/logo.webp">
@@ -45,7 +38,7 @@
     <div class="hero-content" style="position: relative; z-index: 1; max-width: 800px;">
         <img src="image/official/logo.webp" height="180px" width="180px" alt="GSTU Science Club Logo" style="margin-bottom: 10px;">
     
-        <h1 class="hero-title">GSTU Science Club</h1>
+        <h1 class="hero-titles">GSTU Science Club</h1>
         <h3>Apply Your Idea</h3> <br>
         <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Start your journey into the unknown from here . . . .</p>
         
@@ -276,7 +269,7 @@
     </div>
 
 <!-- Executive Committee Section -->
-<div class="section-container reveal-on-scroll" id="executive-committee-section">
+<div class="section-container reveal-on-scroll">
     <h2 class="section-title">Current Executive Committee</h2>
     <p class="section-subtitle">Meet the student leadership driving innovation, operations, and management across GSTU Science Club.</p>
 
@@ -286,7 +279,7 @@
         <button class="carousel-btn next-btn" id="execNext" aria-label="Next members">&#10095;</button>
 
         <!-- Direct Viewport (Outer main box wrapper removed) -->
-        <div class="exec-carousel-viewport">
+        <div class="exec-carousel-viewport" id="execViewport">
             <div class="exec-carousel-track" id="execTrack">
                 
                 <!-- 1. PRESIDENT -->
