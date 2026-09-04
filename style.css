@@ -2890,3 +2890,30 @@ h2 {
         pointer-events: none !important;
     }
 }
+
+/* Make the card box slightly smaller/tighter */
+.card {
+    background: var(--card-bg);
+    padding: 1.8rem 1.5rem; /* Reduced padding from 2.5rem 2rem */
+    max-width: 320px;       /* Restricts maximum card width */
+    margin: 0 auto;         /* Centers the card in grid cells */
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: background-color 0.4s var(--transition-smooth), color 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Make the image container a clean square */
+.executive-photo {
+    width: 100%;
+    max-width: 150px;       /* Reduced from 200px to make it smaller */
+    aspect-ratio: 1 / 1;    /* Forces height to equal width (Square) */
+    height: auto;           /* Clears old fixed height */
+    margin: 0 auto 15px auto;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(15, 83, 112, 0.1);
+    box-shadow: var(--shadow-sm);
+    background: #e2e8f0;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
