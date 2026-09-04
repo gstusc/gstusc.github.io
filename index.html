@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,62 +13,67 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <link rel="icon" type="image/webp" href="image/official/logo.webp">
 </head>
+
 <body class="max-w-full overflow-x-hidden">
 
-  <!-- PRELOADER OVERLAY -->
-  <div id="loader-wrapper">
-    <div class="spinner-box">
-      <div class="blue-orbit leo"></div>
-      <div class="green-orbit leo"></div>
-      <div class="red-orbit leo"></div>
-      <div class="white-orbit w1 leo"></div>
-      <div class="white-orbit w2 leo"></div>
-      <div class="white-orbit w3 leo"></div>
+    <!-- PRELOADER OVERLAY -->
+    <div id="loader-wrapper">
+        <div class="spinner-box">
+            <div class="blue-orbit leo"></div>
+            <div class="green-orbit leo"></div>
+            <div class="red-orbit leo"></div>
+            <div class="white-orbit w1 leo"></div>
+            <div class="white-orbit w2 leo"></div>
+            <div class="white-orbit w3 leo"></div>
+        </div>
+        <div class="loading-text">Preparing for Discovery...</div>
     </div>
-    <div class="loading-text">Preparing for Discovery...</div>
-  </div>
-    
+
     <universal-header></universal-header>
 
-<section id="hero">
+    <section id="hero">
 
-    <!-- BACKGROUND CANVAS -->
-    <canvas id="atom-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></canvas>
+        <!-- BACKGROUND CANVAS -->
+        <canvas id="atom-canvas"
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></canvas>
 
-    <!-- FOREGROUND CONTENT -->
-    <div class="hero-content" style="position: relative; z-index: 1; max-width: 800px;">
-        <img src="image/official/logo.webp" height="180px" width="180px" alt="GSTU Science Club Logo" style="margin-bottom: 10px;">
-    
-        <h1 class="hero-titles">GSTU Science Club</h1>
-        <h3>Apply Your Idea</h3> <br>
-        <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Start your journey into the unknown from here . . . .</p>
-        
-        <!-- STATS BOXES -->
-        <div class="hero-stats">
-            <div class="stat-box">
-                <h2 class="counter" data-target="800" data-suffix="+">0</h2>
-                <p>Members</p>
-            </div>
-            <div class="stat-box">
-                <h2 class="counter" data-target="3">0</h2>
-                <p>Teams</p>
-            </div>
-            <div class="stat-box">
-                <h2 class="counter" data-target="100" data-suffix="+">0</h2>
-                <p>Events</p>
-            </div>
-            <div class="stat-box">
-                <h2 class="counter" data-target="10" data-suffix="+">0</h2>
-                <p>Achievements</p>
+        <!-- FOREGROUND CONTENT -->
+        <div class="hero-content" style="position: relative; z-index: 1; max-width: 800px;">
+            <img src="image/official/logo.webp" height="180px" width="180px" alt="GSTU Science Club Logo"
+                style="margin-bottom: 10px;">
+
+            <h1 class="hero-titles">GSTU Science Club</h1>
+            <h3>Apply Your Idea</h3> <br>
+            <p>Join the brightest minds at GSTU as we push the boundaries of science, technology, and engineering. Start
+                your journey into the unknown from here . . . .</p>
+
+            <!-- STATS BOXES -->
+            <div class="hero-stats">
+                <div class="stat-box">
+                    <h2 class="counter" data-target="800" data-suffix="+">0</h2>
+                    <p>Members</p>
+                </div>
+                <div class="stat-box">
+                    <h2 class="counter" data-target="3">0</h2>
+                    <p>Teams</p>
+                </div>
+                <div class="stat-box">
+                    <h2 class="counter" data-target="100" data-suffix="+">0</h2>
+                    <p>Events</p>
+                </div>
+                <div class="stat-box">
+                    <h2 class="counter" data-target="10" data-suffix="+">0</h2>
+                    <p>Achievements</p>
+                </div>
             </div>
         </div>
-    </div>
 
-</section>
-    
+    </section>
+
     <div class="section-container reveal-on-scroll">
         <h2 class="section-title">Welcome to the Science Hub</h2>
-        <p class="section-subtitle">The GSTU Science Club is a platform for curious minds. Click through our portal sections below to see who we are, what we build, and how you can get involved.</p>
+        <p class="section-subtitle">The GSTU Science Club is a platform for curious minds. Click through our portal
+            sections below to see who we are, what we build, and how you can get involved.</p>
 
         <div class="grid">
             <div class="card reveal-on-scroll">
@@ -94,14 +100,437 @@
                 <h3>Achievements</h3>
                 <p>Milestones, awards, and club success stories.</p>
                 <br>
-                <a href="achievement.html" class="btns" style="padding: 8px 20px; font-size: 0.9rem;">View Achievements</a>
+                <a href="achievement.html" class="btns" style="padding: 8px 20px; font-size: 0.9rem;">View
+                    Achievements</a>
             </div>
         </div>
     </div>
 
     <div class="section-container reveal-on-scroll">
+        <h2 class="section-title">Our Affiliations</h2>
+        <p class="section-subtitle">We are proudly affiliated with and supported by leading institutional bodies that
+            drive scientific research and technological literacy.</p>
+
+        <div class="affiliations-list"
+            style="display: flex; flex-direction: column; gap: 25px; max-width: 1000px; margin: 2.5rem auto 0 auto;">
+
+            <div class="affiliation-wide-card interactive-affiliation-card reveal-on-scroll">
+                <div class="affiliation-logo-frame"
+                    style="flex-shrink: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/6/67/GSTU_Logo.png" alt="GSTU Logo"
+                        style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+                <div class="affiliation-details" style="position: relative; z-index: 2;">
+                    <span class="affiliation-badge">Parent Institute</span>
+                    <h3>Gopalganj Science and Technology University (GSTU)</h3>
+                    <p>Provides the essential infrastructure, academic mentorship, and advanced lab facilities.</p>
+                </div>
+            </div>
+
+            <div class="affiliation-wide-card interactive-affiliation-card reveal-on-scroll">
+                <div class="affiliation-logo-frame"
+                    style="flex-shrink: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/National_Museum_of_Science_and_Technology_%28Bangladesh%29_logo.svg/500px-National_Museum_of_Science_and_Technology_%28Bangladesh%29_logo.svg.png"
+                        alt="NMST Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+                <div class="affiliation-details" style="position: relative; z-index: 2;">
+                    <span class="affiliation-badge">Govt. Affiliate</span>
+                    <h3>National Museum of Science and Technology (NMST), Bangladesh</h3>
+                    <p>Integrates the club with national science exhibitions and state-backed competitive networks.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Messages From Our Leaders Section -->
+    <div class="section-container messages-section reveal-on-scroll">
+        <h2 class="section-title">Messages From Our Leaders</h2>
+        <p class="section-subtitle">Read inspiring words and visionary guidance from our honorable advisors and
+            leadership board.</p>
+
+        <!-- Carousel Wrapper -->
+        <div class="msg-carousel-container" id="msgCarousel" tabindex="0"
+            aria-label="Leader Messages Carousel. Use arrow keys to navigate.">
+
+            <button class="msg-carousel-btn msg-prev-btn" id="msgPrev" aria-label="Previous message">&#10094;</button>
+
+            <div class="msg-carousel-viewport" id="msgViewport">
+                <div class="msg-carousel-track" id="msgTrack">
+
+                    <!-- Leader 3 -->
+                    <div class="message-card" data-index="2">
+                        <div class="leader-image-frame">
+                            <img src="Image people/CEC/PS.webp" alt="Md. Tawhidur Rahman"
+                                onerror="this.src='image/logo.webp'">
+                        </div>
+                        <div class="leader-content">
+                            <h3 class="leader-name">Md. Tawhidur Rahman</h3>
+                            <p class="leader-title">President, GSTU Science Club</p>
+                            <blockquote class="leader-quote">
+                                "A science club is not supposed to be all about contesting and doing activities. GSTU
+                                Science Club endeavors to provide a place where students can engage in asking meaningful
+                                questions, testing theories, learning from their mistakes, collaborating with others,
+                                and applying knowledge to solve problems. This is our objective—to promote scientific
+                                thought processes and innovations through learning."
+                            </blockquote>
+                        </div>
+                    </div>
+
+                    <!-- Leader 4 -->
+                    <div class="message-card" data-index="3">
+                        <div class="leader-image-frame">
+                            <img src="Image people/CEC/GS.webp" alt="S M Al-Amin Nishan"
+                                onerror="this.src='image/logo.webp'">
+                        </div>
+                        <div class="leader-content">
+                            <h3 class="leader-name">S M Al-Amin Nishan</h3>
+                            <p class="leader-title">General Secretary, GSTU Science Club</p>
+                            <blockquote class="leader-quote">
+                                "I believe science has the power to transform society and build a sustainable future. My
+                                vision is to promote scientific curiosity, innovation, and research among students
+                                through impactful projects, conferences, and collaborative activities. Together, we
+                                strive to create a vibrant scientific community that addresses environmental challenges
+                                and contributes to the betterment of society."
+                            </blockquote>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <button class="msg-carousel-btn msg-next-btn" id="msgNext" aria-label="Next message">&#10095;</button>
+        </div>
+
+        <!-- Pagination Dots -->
+        <div class="msg-carousel-dots" id="msgDots"></div>
+    </div>
+
+    <!-- Executive Committee Section -->
+    <div class="section-container reveal-on-scroll">
+        <h2 class="section-title">Current Executive Committee</h2>
+        <p class="section-subtitle">Meet the student leadership driving innovation, operations, and management across
+            GSTU Science Club.</p>
+
+        <div class="exec-slider-wrapper">
+            <!-- Navigation Buttons -->
+            <button class="carousel-btn prev-btn" id="execPrev" aria-label="Previous members">&#10094;</button>
+            <button class="carousel-btn next-btn" id="execNext" aria-label="Next members">&#10095;</button>
+
+            <!-- Direct Viewport (Outer main box wrapper removed) -->
+            <div class="exec-carousel-viewport" id="execViewport">
+                <div class="exec-carousel-track" id="execTrack">
+
+                    <!-- 1. PRESIDENT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/PS.webp" alt="President"
+                                loading="lazy"></div>
+                        <h3>Md Tawhidur Rahman</h3>
+                        <p class="exec-designation">President</p>
+                    </div>
+
+                    <!-- 2. VICE PRESIDENTS -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/vp1.webp" alt="Vice President"
+                                loading="lazy"></div>
+                        <h3>Md Papul Mia</h3>
+                        <p class="exec-designation">Vice President</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/vp2.webp" alt="Vice President"
+                                loading="lazy"></div>
+                        <h3>Kazi Zahid Hasan</h3>
+                        <p class="exec-designation">Vice President</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/vp3.webp"
+                                alt="Vice President" loading="lazy"></div>
+                        <h3>Anika Rahman Nishi</h3>
+                        <p class="exec-designation">Vice President</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/vp4.webp" alt="Vice President"
+                                loading="lazy"></div>
+                        <h3>Md. Borhanuddin Rabbani</h3>
+                        <p class="exec-designation">Vice President</p>
+                    </div>
+
+                    <!-- 3. GENERAL SECRETARY -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/GS.webp" alt="General Secretary"
+                                loading="lazy"></div>
+                        <h3>S M Nishan</h3>
+                        <p class="exec-designation">General Secretary</p>
+                    </div>
+
+                    <!-- 4. JOINT SECRETARIES -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/js1.webp" alt="Joint Secretary"
+                                loading="lazy"></div>
+                        <h3>Md Zubayer</h3>
+                        <p class="exec-designation">Joint Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/js2.webp" alt="Joint Secretary"
+                                loading="lazy"></div>
+                        <h3>Sadia Mehnaj Saila</h3>
+                        <p class="exec-designation">Joint Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/js3.webp"
+                                alt="Joint Secretary" loading="lazy"></div>
+                        <h3>Anika Sharmila Arthy</h3>
+                        <p class="exec-designation">Joint Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/jd4.webp" alt="Joint Secretary"
+                                loading="lazy"></div>
+                        <h3>Nur Hasan Sharabon</h3>
+                        <p class="exec-designation">Joint Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/js5.webp" alt="Joint Secretary"
+                                loading="lazy"></div>
+                        <h3>Jhuma Akhter</h3>
+                        <p class="exec-designation">Joint Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/js6.webp"
+                                alt="Joint Secretary" loading="lazy"></div>
+                        <h3>Dipa Bhattacharjee</h3>
+                        <p class="exec-designation">Joint Secretary</p>
+                    </div>
+
+                    <!-- 5. ORGANIZING SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/os.webp"
+                                alt="Organizing Secretary" loading="lazy"></div>
+                        <h3>Md. Barakat Ullah Miah</h3>
+                        <p class="exec-designation">Organizing Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dogs.webp"
+                                alt="Deputy Organizing Secretary" loading="lazy"></div>
+                        <h3>Md Rubaid Hasan</h3>
+                        <p class="exec-designation">Deputy Organizing Secretary</p>
+                    </div>
+
+                    <!-- 6. TREASURY SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/t.webp" alt="Treasurer"
+                                loading="lazy"></div>
+                        <h3>Ashikuzzaman Helal</h3>
+                        <p class="exec-designation">Treasurer</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/dep_treasurer.webp"
+                                alt="Deputy Treasurer" loading="lazy"></div>
+                        <h3>Most. Masuma Khatun</h3>
+                        <p class="exec-designation">Deputy Treasurer</p>
+                    </div>
+
+                    <!-- 7. PUBLICITY SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/pcs.webp"
+                                alt="Publicity Secretary" loading="lazy"></div>
+                        <h3>Suronjit Saha Shuvo</h3>
+                        <p class="exec-designation">Publicity Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dps.webp"
+                                alt="Deputy Publicity Secretary" loading="lazy"></div>
+                        <h3>Mst. Onima Akter</h3>
+                        <p class="exec-designation">Deputy Publicity Secretary</p>
+                    </div>
+
+                    <!-- 8. OFFICE SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/ofs.webp" alt="Office Secretary"
+                                loading="lazy"></div>
+                        <h3>Md Shamim Hasan Akash</h3>
+                        <p class="exec-designation">Office Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dofs.webp"
+                                alt="Deputy Office Secretary" loading="lazy"></div>
+                        <h3>Ayon Suvro Adhikary</h3>
+                        <p class="exec-designation">Deputy Office Secretary</p>
+                    </div>
+
+                    <!-- 9. PUBLICATION SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/pbs.webp"
+                                alt="Publication Secretary" loading="lazy"></div>
+                        <h3>Md. Rifat Islam</h3>
+                        <p class="exec-designation">Publication Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dpbs.webp"
+                                alt="Deputy Publication Secretary" loading="lazy"></div>
+                        <h3>Md Khademul Islam</h3>
+                        <p class="exec-designation">Deputy Publication Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dpbs2.webp"
+                                alt="Deputy Publication Secretary" loading="lazy"></div>
+                        <h3>Nure Jannat Akhi</h3>
+                        <p class="exec-designation">Deputy Publication Secretary</p>
+                    </div>
+
+                    <!-- 10. HRM SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/hrm.webp" alt="HRM Secretary"
+                                loading="lazy"></div>
+                        <h3>Sazzad Hosan Arif</h3>
+                        <p class="exec-designation">HRM Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dhrm.webp"
+                                alt="Deputy HRM Secretary" loading="lazy"></div>
+                        <h3>Mst Jiniya Khatun</h3>
+                        <p class="exec-designation">Deputy HRM Secretary</p>
+                    </div>
+
+                    <!-- 11. IT SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/it.webp" alt="IT Secretary"
+                                loading="lazy"></div>
+                        <h3>Md Rahul</h3>
+                        <p class="exec-designation">IT Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/dit.webp"
+                                alt="Deputy IT Secretary" loading="lazy"></div>
+                        <h3>Susmoy Chandra Das</h3>
+                        <p class="exec-designation">Deputy IT Secretary</p>
+                    </div>
+
+                    <!-- 12. COLLABORATION & COMMUNICATION SECRETARIAT -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/ccs.webp"
+                                alt="Collaboration & Communication Secretary" loading="lazy"></div>
+                        <h3>Mst. Luna Parvin</h3>
+                        <p class="exec-designation">Collaboration & Communication Secretary</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/dep_collab_sec.webp"
+                                alt="Deputy Collaboration Secretary" loading="lazy"></div>
+                        <h3>Sadia Sultana Disha</h3>
+                        <p class="exec-designation">Deputy Collaboration Secretary</p>
+                    </div>
+
+                    <!-- 13. SENIOR EXECUTIVE MEMBERS -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/sr1.webp"
+                                alt="Senior Executive Member" loading="lazy"></div>
+                        <h3>MD Atikur Rahman</h3>
+                        <p class="exec-designation">Senior Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/se3.webp"
+                                alt="Senior Executive Member" loading="lazy"></div>
+                        <h3>Pratim Mandal</h3>
+                        <p class="exec-designation">Senior Executive Member</p>
+                    </div>
+
+                    <!-- 14. EXECUTIVE MEMBERS -->
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem1.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>Mohuya Khatun</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem2.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>MST Jasmine Akter</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/e3.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Sanjida Akter</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/ex4.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Md Esanur Islam</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/e5.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Shamima Akter</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem6.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>Munira Khondoker</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem7.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>Zarin Akhter</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/e8.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Raihan</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/ex9.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Dipankar Talukdar</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem10.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>Sabiha Jannat</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem11.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>Ilma Rahman</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/ex12.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Rafiul Bari Shanchy</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/CEC/ex13.webp" alt="Executive Member"
+                                loading="lazy"></div>
+                        <h3>Toufiq Hasan</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+                    <div class="exec-card">
+                        <div class="executive-square-photo"><img src="Image people/executives/mem14.webp"
+                                alt="Executive Member" loading="lazy"></div>
+                        <h3>Md. Abu Huraira</h3>
+                        <p class="exec-designation">Executive Member</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Dynamic Dots Navigation -->
+            <div class="gallery-carousel-dots" id="execDots"></div>
+        </div>
+    </div>
+
+    <div class="section-container reveal-on-scroll">
         <h2 class="section-title">Photo Gallery</h2>
-        <p class="section-subtitle">Moments captured during our collaborative workshops, design sessions, and competitive representations.</p>
+        <p class="section-subtitle">Moments captured during our collaborative workshops, design sessions, and
+            competitive representations.</p>
 
         <div class="gallery-carousel-container">
             <button class="carousel-btn prev-btn" id="galleryPrev" aria-label="Previous photos">&#10094;</button>
@@ -179,376 +608,21 @@
                         <img src="image/nmst.webp" alt="National Museum of Science & Technology">
                         <div class="gallery-caption">National Museum of Science & Technology</div>
                     </div>
-                </div>                    
+                </div>
                 <button class="carousel-btn next-btn" id="galleryNext" aria-label="Next photos">&#10095;</button>
             </div>
         </div>
         <div class="gallery-carousel-dots" id="galleryDots"></div>
     </div>
 
-    <div class="section-container reveal-on-scroll">
-        <h2 class="section-title">Our Affiliations</h2>
-        <p class="section-subtitle">We are proudly affiliated with and supported by leading institutional bodies that drive scientific research and technological literacy.</p>
-        
-        <div class="affiliations-list" style="display: flex; flex-direction: column; gap: 25px; max-width: 1000px; margin: 2.5rem auto 0 auto;">
-            
-            <div class="affiliation-wide-card interactive-affiliation-card reveal-on-scroll">
-                <div class="affiliation-logo-frame" style="flex-shrink: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/6/67/GSTU_Logo.png" alt="GSTU Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                </div>
-                <div class="affiliation-details" style="position: relative; z-index: 2;">
-                    <span class="affiliation-badge">Parent Institute</span>
-                    <h3>Gopalganj Science and Technology University (GSTU)</h3>
-                    <p>Provides the essential infrastructure, academic mentorship, and advanced lab facilities.</p>
-                </div>
-            </div>
-
-            <div class="affiliation-wide-card interactive-affiliation-card reveal-on-scroll">
-                <div class="affiliation-logo-frame" style="flex-shrink: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2;">
-                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/National_Museum_of_Science_and_Technology_%28Bangladesh%29_logo.svg/500px-National_Museum_of_Science_and_Technology_%28Bangladesh%29_logo.svg.png" alt="NMST Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                </div>
-                <div class="affiliation-details" style="position: relative; z-index: 2;">
-                    <span class="affiliation-badge">Govt. Affiliate</span>
-                    <h3>National Museum of Science and Technology (NMST), Bangladesh</h3>
-                    <p>Integrates the club with national science exhibitions and state-backed competitive networks.</p>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Messages From Our Leaders Section -->
-    <div class="section-container messages-section reveal-on-scroll">
-        <h2 class="section-title">Messages From Our Leaders</h2>
-        <p class="section-subtitle">Read inspiring words and visionary guidance from our honorable advisors and leadership board.</p>
-
-        <!-- Carousel Wrapper -->
-        <div class="msg-carousel-container" id="msgCarousel" tabindex="0" aria-label="Leader Messages Carousel. Use arrow keys to navigate.">
-
-            <button class="msg-carousel-btn msg-prev-btn" id="msgPrev" aria-label="Previous message">&#10094;</button>
-            
-            <div class="msg-carousel-viewport" id="msgViewport">
-                <div class="msg-carousel-track" id="msgTrack">
-                    
-                    <!-- Leader 3 -->
-                    <div class="message-card" data-index="2">
-                        <div class="leader-image-frame">
-                            <img src="Image people/CEC/PS.webp" alt="Md. Tawhidur Rahman" onerror="this.src='image/logo.webp'">
-                        </div>
-                        <div class="leader-content">
-                            <h3 class="leader-name">Md. Tawhidur Rahman</h3>
-                            <p class="leader-title">President, GSTU Science Club</p>
-                            <blockquote class="leader-quote">
-                                "A science club is not supposed to be all about contesting and doing activities. GSTU Science Club endeavors to provide a place where students can engage in asking meaningful questions, testing theories, learning from their mistakes, collaborating with others, and applying knowledge to solve problems. This is our objective—to promote scientific thought processes and innovations through learning."
-                            </blockquote>
-                        </div>
-                    </div>
-
-                    <!-- Leader 4 -->
-                    <div class="message-card" data-index="3">
-                        <div class="leader-image-frame">
-                            <img src="Image people/CEC/GS.webp" alt="S M Al-Amin Nishan" onerror="this.src='image/logo.webp'">
-                        </div>
-                        <div class="leader-content">
-                            <h3 class="leader-name">S M Al-Amin Nishan</h3>
-                            <p class="leader-title">General Secretary, GSTU Science Club</p>
-                            <blockquote class="leader-quote">
-                                "I believe science has the power to transform society and build a sustainable future. My vision is to promote scientific curiosity, innovation, and research among students through impactful projects, conferences, and collaborative activities. Together, we strive to create a vibrant scientific community that addresses environmental challenges and contributes to the betterment of society."
-                            </blockquote>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <button class="msg-carousel-btn msg-next-btn" id="msgNext" aria-label="Next message">&#10095;</button>
-        </div>
-
-        <!-- Pagination Dots -->
-        <div class="msg-carousel-dots" id="msgDots"></div>
-    </div>
-
-<!-- Executive Committee Section -->
-<div class="section-container reveal-on-scroll">
-    <h2 class="section-title">Current Executive Committee</h2>
-    <p class="section-subtitle">Meet the student leadership driving innovation, operations, and management across GSTU Science Club.</p>
-
-    <div class="exec-slider-wrapper">
-        <!-- Navigation Buttons -->
-        <button class="carousel-btn prev-btn" id="execPrev" aria-label="Previous members">&#10094;</button>
-        <button class="carousel-btn next-btn" id="execNext" aria-label="Next members">&#10095;</button>
-
-        <!-- Direct Viewport (Outer main box wrapper removed) -->
-        <div class="exec-carousel-viewport" id="execViewport">
-            <div class="exec-carousel-track" id="execTrack">
-                
-                <!-- 1. PRESIDENT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/PS.webp" alt="President" loading="lazy"></div>
-                    <h3>Md Tawhidur Rahman</h3>
-                    <p class="exec-designation">President</p>
-                </div>
-
-                <!-- 2. VICE PRESIDENTS -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/vp1.webp" alt="Vice President" loading="lazy"></div>
-                    <h3>Md Papul Mia</h3>
-                    <p class="exec-designation">Vice President</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/vp2.webp" alt="Vice President" loading="lazy"></div>
-                    <h3>Kazi Zahid Hasan</h3>
-                    <p class="exec-designation">Vice President</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/vp3.webp" alt="Vice President" loading="lazy"></div>
-                    <h3>Anika Rahman Nishi</h3>
-                    <p class="exec-designation">Vice President</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/vp4.webp" alt="Vice President" loading="lazy"></div>
-                    <h3>Md. Borhanuddin Rabbani</h3>
-                    <p class="exec-designation">Vice President</p>
-                </div>
-
-                <!-- 3. GENERAL SECRETARY -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/GS.webp" alt="General Secretary" loading="lazy"></div>
-                    <h3>S M Nishan</h3>
-                    <p class="exec-designation">General Secretary</p>
-                </div>
-
-                <!-- 4. JOINT SECRETARIES -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/js1.webp" alt="Joint Secretary" loading="lazy"></div>
-                    <h3>Md Zubayer</h3>
-                    <p class="exec-designation">Joint Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/js2.webp" alt="Joint Secretary" loading="lazy"></div>
-                    <h3>Sadia Mehnaj Saila</h3>
-                    <p class="exec-designation">Joint Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/js3.webp" alt="Joint Secretary" loading="lazy"></div>
-                    <h3>Anika Sharmila Arthy</h3>
-                    <p class="exec-designation">Joint Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/jd4.webp" alt="Joint Secretary" loading="lazy"></div>
-                    <h3>Nur Hasan Sharabon</h3>
-                    <p class="exec-designation">Joint Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/js5.webp" alt="Joint Secretary" loading="lazy"></div>
-                    <h3>Jhuma Akhter</h3>
-                    <p class="exec-designation">Joint Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/js6.webp" alt="Joint Secretary" loading="lazy"></div>
-                    <h3>Dipa Bhattacharjee</h3>
-                    <p class="exec-designation">Joint Secretary</p>
-                </div>
-
-                <!-- 5. ORGANIZING SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/os.webp" alt="Organizing Secretary" loading="lazy"></div>
-                    <h3>Md. Barakat Ullah Miah</h3>
-                    <p class="exec-designation">Organizing Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dogs.webp" alt="Deputy Organizing Secretary" loading="lazy"></div>
-                    <h3>Md Rubaid Hasan</h3>
-                    <p class="exec-designation">Deputy Organizing Secretary</p>
-                </div>
-
-                <!-- 6. TREASURY SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/t.webp" alt="Treasurer" loading="lazy"></div>
-                    <h3>Ashikuzzaman Helal</h3>
-                    <p class="exec-designation">Treasurer</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/dep_treasurer.webp" alt="Deputy Treasurer" loading="lazy"></div>
-                    <h3>Most. Masuma Khatun</h3>
-                    <p class="exec-designation">Deputy Treasurer</p>
-                </div>
-
-                <!-- 7. PUBLICITY SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/pcs.webp" alt="Publicity Secretary" loading="lazy"></div>
-                    <h3>Suronjit Saha Shuvo</h3>
-                    <p class="exec-designation">Publicity Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dps.webp" alt="Deputy Publicity Secretary" loading="lazy"></div>
-                    <h3>Mst. Onima Akter</h3>
-                    <p class="exec-designation">Deputy Publicity Secretary</p>
-                </div>
-
-                <!-- 8. OFFICE SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/ofs.webp" alt="Office Secretary" loading="lazy"></div>
-                    <h3>Md Shamim Hasan Akash</h3>
-                    <p class="exec-designation">Office Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dofs.webp" alt="Deputy Office Secretary" loading="lazy"></div>
-                    <h3>Ayon Suvro Adhikary</h3>
-                    <p class="exec-designation">Deputy Office Secretary</p>
-                </div>
-
-                <!-- 9. PUBLICATION SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/pbs.webp" alt="Publication Secretary" loading="lazy"></div>
-                    <h3>Md. Rifat Islam</h3>
-                    <p class="exec-designation">Publication Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dpbs.webp" alt="Deputy Publication Secretary" loading="lazy"></div>
-                    <h3>Md Khademul Islam</h3>
-                    <p class="exec-designation">Deputy Publication Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dpbs2.webp" alt="Deputy Publication Secretary" loading="lazy"></div>
-                    <h3>Nure Jannat Akhi</h3>
-                    <p class="exec-designation">Deputy Publication Secretary</p>
-                </div>
-
-                <!-- 10. HRM SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/hrm.webp" alt="HRM Secretary" loading="lazy"></div>
-                    <h3>Sazzad Hosan Arif</h3>
-                    <p class="exec-designation">HRM Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dhrm.webp" alt="Deputy HRM Secretary" loading="lazy"></div>
-                    <h3>Mst Jiniya Khatun</h3>
-                    <p class="exec-designation">Deputy HRM Secretary</p>
-                </div>
-
-                <!-- 11. IT SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/it.webp" alt="IT Secretary" loading="lazy"></div>
-                    <h3>Md Rahul</h3>
-                    <p class="exec-designation">IT Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/dit.webp" alt="Deputy IT Secretary" loading="lazy"></div>
-                    <h3>Susmoy Chandra Das</h3>
-                    <p class="exec-designation">Deputy IT Secretary</p>
-                </div>
-
-                <!-- 12. COLLABORATION & COMMUNICATION SECRETARIAT -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/ccs.webp" alt="Collaboration & Communication Secretary" loading="lazy"></div>
-                    <h3>Mst. Luna Parvin</h3>
-                    <p class="exec-designation">Collaboration & Communication Secretary</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/dep_collab_sec.webp" alt="Deputy Collaboration Secretary" loading="lazy"></div>
-                    <h3>Sadia Sultana Disha</h3>
-                    <p class="exec-designation">Deputy Collaboration Secretary</p>
-                </div>
-
-                <!-- 13. SENIOR EXECUTIVE MEMBERS -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/sr1.webp" alt="Senior Executive Member" loading="lazy"></div>
-                    <h3>MD Atikur Rahman</h3>
-                    <p class="exec-designation">Senior Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/se3.webp" alt="Senior Executive Member" loading="lazy"></div>
-                    <h3>Pratim Mandal</h3>
-                    <p class="exec-designation">Senior Executive Member</p>
-                </div>
-
-                <!-- 14. EXECUTIVE MEMBERS -->
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem1.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Mohuya Khatun</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem2.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>MST Jasmine Akter</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/e3.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Sanjida Akter</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/ex4.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Md Esanur Islam</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/e5.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Shamima Akter</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem6.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Munira Khondoker</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem7.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Zarin Akhter</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/e8.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Raihan</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/ex9.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Dipankar Talukdar</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem10.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Sabiha Jannat</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem11.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Ilma Rahman</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/ex12.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Rafiul Bari Shanchy</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/CEC/ex13.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Toufiq Hasan</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-                <div class="exec-card">
-                    <div class="executive-square-photo"><img src="Image people/executives/mem14.webp" alt="Executive Member" loading="lazy"></div>
-                    <h3>Md. Abu Huraira</h3>
-                    <p class="exec-designation">Executive Member</p>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Dynamic Dots Navigation -->
-        <div class="gallery-carousel-dots" id="execDots"></div>
-    </div>
-</div>
-    
     <div class="section-container qa-section reveal-on-scroll">
         <h2 class="section-title">Why Join Us?</h2>
-        <p class="section-subtitle">Got questions? We've got answers. Here is what you need to know about becoming a part of our community.</p>
-        
-        <div class="qa-container" style="max-width: 1200px; margin: 0 auto; text-align: left; display: flex; flex-direction: column; gap: 20px;">
-            
+        <p class="section-subtitle">Got questions? We've got answers. Here is what you need to know about becoming a
+            part of our community.</p>
+
+        <div class="qa-container"
+            style="max-width: 1200px; margin: 0 auto; text-align: left; display: flex; flex-direction: column; gap: 20px;">
+
             <div class="qa-item interactive-qa-card reveal-on-scroll">
                 <h4>❓ Why Clubbing is Essential?</h4>
                 <p>Builds vital soft skills and expands your network.</p>
@@ -588,6 +662,7 @@
     <universal-footer></universal-footer>
 
     <script src="main.js"></script>
-    
+
 </body>
+
 </html>
