@@ -115,6 +115,11 @@ svg {
     max-width: 100%;
 }
 
+img,
+video {
+    height: auto;
+}
+
 body.loading {
     overflow: hidden;
 }
@@ -135,6 +140,14 @@ body.loading {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+}
+
+/* These continuously repainted background layers add little value on touch devices. */
+@media (hover: none) and (pointer: coarse) {
+    body::before,
+    body::after {
+        animation: none;
     }
 }
 
@@ -1303,6 +1316,8 @@ nav ul li a.active {
 .reveal-on-scroll.is-visible {
     opacity: 1;
     transform: translateY(0);
+    /* Release the compositing layer after the one-time entrance animation. */
+    will-change: auto;
 }
 
 .grid .card.reveal-on-scroll:nth-child(1) {
@@ -1810,6 +1825,12 @@ details[open] summary {
 .event-photo-card:hover {
     transform: translateY(-5px);
     border-color: var(--accent-color);
+}
+
+/* Long achievement pages can skip paint/layout work for cards outside the viewport. */
+.single-event-container {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
 }
 
 .event-img-wrapper {

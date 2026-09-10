@@ -688,10 +688,18 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // Populate missing session values across the dataset dynamically
-    const sampleMembers = rawMembers.map(member => ({
-        ...member,
-        session: member.session || calculateSession(member.clubId)
-    }));
+    const sampleMembers = rawMembers.map(member => {
+        const session = member.session || calculateSession(member.clubId);
+        return {
+            ...member,
+            session,
+            // Build once so every search avoids lowercasing five fields per member.
+            searchIndex: [member.name, member.clubId, member.dept, member.faculty, session]
+                .filter(Boolean)
+                .join(' ')
+                .toLowerCase()
+        };
+    });
 
     if (searchForm && searchInput) {
         searchForm.addEventListener('submit', (e) => {
@@ -701,13 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!query) return;
 
             // Filter all records based on user search query
-            const matches = sampleMembers.filter(m =>
-                (m.name && m.name.toLowerCase().includes(query)) ||
-                (m.clubId && m.clubId.toLowerCase().includes(query)) ||
-                (m.dept && m.dept.toLowerCase().includes(query)) ||
-                (m.faculty && m.faculty.toLowerCase().includes(query)) ||
-                (m.session && m.session.toLowerCase().includes(query))
-            );
+            const matches = sampleMembers.filter(member => member.searchIndex.includes(query));
 
             // Clear previous results
             resultsContainer.innerHTML = '';
@@ -721,6 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultCountBox.style.display = 'block';
 
                 // Render each matching result card
+                const resultsFragment = document.createDocumentFragment();
                 matches.forEach(m => {
                     const card = document.createElement('div');
                     card.className = 'interactive-qa-card';
@@ -764,8 +767,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `;
 
-                    resultsContainer.appendChild(card);
+                    resultsFragment.appendChild(card);
                 });
+                resultsContainer.appendChild(resultsFragment);
             } else {
                 resultCountBox.style.display = 'none';
                 notFoundBox.style.display = 'block';

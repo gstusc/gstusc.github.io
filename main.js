@@ -782,31 +782,29 @@ function animateHeroStatBoxes() {
 // --- HERO COUNTER ANIMATION ENGINE ---
 function startHeroCounters() {
     const counters = document.querySelectorAll('.counter');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     counters.forEach((counter) => {
         if (counter.classList.contains('counted')) return;
         counter.classList.add('counted');
 
-        const target = +counter.getAttribute('data-target');
+        const target = Number(counter.getAttribute('data-target')) || 0;
         const suffix = counter.getAttribute('data-suffix') || '';
         const duration = 2000;
-        const frameDuration = 1000 / 60;
-        const totalFrames = Math.round(duration / frameDuration);
+        if (reduceMotion) {
+            counter.textContent = target + suffix;
+            return;
+        }
 
-        let frame = 0;
-
-        const countUp = setInterval(() => {
-            frame++;
-            const progress = frame / totalFrames;
+        const startTime = performance.now();
+        const countUp = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
             const currentCount = Math.round(target * (1 - Math.pow(1 - progress, 3)));
+            counter.textContent = currentCount + suffix;
 
-            counter.innerText = currentCount + suffix;
-
-            if (frame >= totalFrames) {
-                counter.innerText = target + suffix;
-                clearInterval(countUp);
-            }
-        }, frameDuration);
+            if (progress < 1) requestAnimationFrame(countUp);
+        };
+        requestAnimationFrame(countUp);
     });
 }
 
@@ -839,12 +837,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bind dynamic cursor tracking for radial card overlays
     const interactiveCards = document.querySelectorAll('.qa-item, .affiliation-wide-card, .message-card');
     interactiveCards.forEach(card => {
+        let animationFrame = null;
+        let pointerX = 0;
+        let pointerY = 0;
         card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--x', `${x}px`);
-            card.style.setProperty('--y', `${y}px`);
+            pointerX = e.clientX - rect.left;
+            pointerY = e.clientY - rect.top;
+            if (animationFrame) return;
+
+            animationFrame = requestAnimationFrame(() => {
+                card.style.setProperty('--x', `${pointerX}px`);
+                card.style.setProperty('--y', `${pointerY}px`);
+                animationFrame = null;
+            });
         });
     });
 });
