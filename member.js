@@ -5,14 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultCountBox = document.getElementById('searchResultCount');
     const notFoundBox = document.getElementById('membershipNotFound');
 
-    // Dynamic session calculation helper based on GSTU/BSMRSTU batch codes
+// Dynamic session calculation helper based on GSTU/BSMRSTU batch codes
     const calculateSession = (clubId) => {
         if (!clubId) return '';
         const batchCode = clubId.substring(0, 2);
         switch (batchCode) {
-            case '22': return '2021-22';
-            case '23': return '2022-23';
-            case '24': return '2023-24';
+            case '22':
+            case '23':
+            case '24':
+                return '';
             default: return '';
         }
     };
@@ -728,29 +729,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     let rowsHtml = '';
                     if (m.clubId) {
                         rowsHtml += `
-                            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 6px;">
-                                <span style="color: rgba(255, 255, 255, 0.7);">Club ID:</span>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(32, 58, 67, 0.12); padding-bottom: 6px;">
+                                <span>Club ID:</span>
                                 <strong>${m.clubId}</strong>
                             </div>`;
                     }
                     if (m.dept) {
                         rowsHtml += `
-                            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 6px;">
-                                <span style="color: rgba(255, 255, 255, 0.7);">Department:</span>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(32, 58, 67, 0.12); padding-bottom: 6px;">
+                                <span>Department:</span>
                                 <strong>${m.dept}</strong>
                             </div>`;
                     }
                     if (m.faculty) {
                         rowsHtml += `
-                            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 6px;">
-                                <span style="color: rgba(255, 255, 255, 0.7);">Faculty:</span>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(32, 58, 67, 0.12); padding-bottom: 6px;">
+                                <span>Faculty:</span>
                                 <strong>${m.faculty}</strong>
                             </div>`;
                     }
 
                     rowsHtml += `
                         <div style="display: flex; justify-content: space-between;">
-                            <span style="color: rgba(255, 255, 255, 0.7);">Session:</span>
+                            <span>Session:</span>
                             <strong>${m.session || 'N/A'}</strong>
                         </div>`;
 

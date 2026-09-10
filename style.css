@@ -2500,14 +2500,14 @@ footer {
 }
 
 .section-title {
-    color: #ffffff;
+    color: var(--primary-color);
     text-align: center;
     font-size: 2rem;
     margin-bottom: 8px;
 }
 
 .section-subtitle {
-    color: #b0bec5;
+    color: var(--text-muted);
     text-align: center;
     font-size: 0.95rem;
     margin-bottom: 30px;
@@ -2916,4 +2916,87 @@ h2 {
     box-shadow: var(--shadow-sm);
     background: #e2e8f0;
     transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.search-membership-section {
+  color: #111827; /* Dark text for light mode */
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-membership-section {
+    color: #f3f4f6; /* Light text for dark mode */
+  }
+}
+
+.search-membership-section {
+  color: #111827; /* Dark text for light mode */
+}
+
+.dark .search-membership-section {
+  color: #f3f4f6; /* Light text for dark mode */
+}
+
+/* ==========================================
+   Membership Search — Theme-safe contrast
+   ========================================== */
+#membership-search-section {
+    color: var(--text-dark);
+}
+
+#membership-search-section .section-subtitle {
+    color: var(--text-muted);
+}
+
+#membershipInput {
+    border-color: #d7e0e5 !important;
+    color: var(--text-dark) !important;
+    background: var(--card-bg) !important;
+}
+
+#membershipInput::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.9;
+}
+
+#membershipInput:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 3px rgba(0, 168, 255, 0.12);
+}
+
+#searchResultsContainer .interactive-qa-card {
+    color: var(--text-dark);
+}
+
+#searchResultsContainer .interactive-qa-card span {
+    color: var(--text-muted) !important;
+}
+
+#searchResultsContainer .interactive-qa-card strong {
+    color: var(--text-dark) !important;
+    font-weight: 600;
+}
+
+#searchResultsContainer .interactive-qa-card > div:first-child {
+    border-bottom-color: rgba(32, 58, 67, 0.12) !important;
+}
+
+#searchResultsContainer .interactive-qa-card > div:last-child > div {
+    border-bottom-color: rgba(32, 58, 67, 0.12) !important;
+}
+
+#membershipNotFound {
+    color: #b42318 !important;
+}
+
+[data-theme="dark"] #membershipNotFound {
+    color: #ff8a80 !important;
+}
+
+[data-theme="dark"] #membershipInput {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] #searchResultsContainer .interactive-qa-card > div:first-child,
+[data-theme="dark"] #searchResultsContainer .interactive-qa-card > div:last-child > div {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
 }
