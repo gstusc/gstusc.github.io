@@ -255,13 +255,21 @@ class UniversalHeader extends HTMLElement {
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeButtonUI(savedTheme);
 
+        let themeTransitionTimer;
+
         themeBtn.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
 
+            document.documentElement.classList.add('theme-transitioning');
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('gstu-theme', newTheme);
             updateThemeButtonUI(newTheme);
+
+            clearTimeout(themeTransitionTimer);
+            themeTransitionTimer = setTimeout(() => {
+                document.documentElement.classList.remove('theme-transitioning');
+            }, 450);
         });
 
         function updateThemeButtonUI(theme) {
@@ -325,6 +333,7 @@ if (msgTrack && msgPrev && msgNext) {
     const msgCards = msgTrack.querySelectorAll('.message-card');
     let currentMsgIndex = 0;
     let msgAutoSlideTimer = null;
+    let msgIsOnScreen = false;
     const MSG_SLIDE_DELAY = 6000;
 
     let startX = 0;
@@ -377,6 +386,7 @@ if (msgTrack && msgPrev && msgNext) {
     }
 
     function startMsgAutoSlide() {
+        if (!msgIsOnScreen) return;
         stopMsgAutoSlide();
         msgAutoSlideTimer = setInterval(nextMsgSlide, MSG_SLIDE_DELAY);
     }
@@ -468,9 +478,19 @@ if (msgTrack && msgPrev && msgNext) {
 
     window.addEventListener('resize', updateMsgSlider);
 
+    const msgVisibilityObserver = new IntersectionObserver((entries) => {
+        msgIsOnScreen = entries[0].isIntersecting;
+        if (msgIsOnScreen) {
+            startMsgAutoSlide();
+        } else {
+            stopMsgAutoSlide();
+        }
+    }, { threshold: 0.2 });
+
+    msgVisibilityObserver.observe(messagesSection || msgCarousel);
+
     setTimeout(() => {
         updateMsgSlider();
-        startMsgAutoSlide();
     }, 100);
 }
 
@@ -551,6 +571,7 @@ const galleryDotsContainer = document.getElementById('galleryDots');
 if (track && prevBtn && nextBtn) {
     let currentColumnIndex = 0;
     let autoSlideInterval = null;
+    let galleryIsOnScreen = false;
     const SLIDE_DELAY = 4000;
 
     function getItemsPerView() {
@@ -674,6 +695,7 @@ if (track && prevBtn && nextBtn) {
     }
 
     function startAutoSlide() {
+        if (!galleryIsOnScreen) return;
         const items = track.querySelectorAll('.gallery-item');
         const totalColumns = Math.ceil(items.length / 2);
         if (totalColumns <= getItemsPerView()) return;
@@ -703,6 +725,17 @@ if (track && prevBtn && nextBtn) {
     if (galleryContainer) {
         galleryContainer.addEventListener('mouseenter', stopAutoSlide);
         galleryContainer.addEventListener('mouseleave', startAutoSlide);
+
+        const galleryVisibilityObserver = new IntersectionObserver((entries) => {
+            galleryIsOnScreen = entries[0].isIntersecting;
+            if (galleryIsOnScreen) {
+                startAutoSlide();
+            } else {
+                stopAutoSlide();
+            }
+        }, { threshold: 0.2 });
+
+        galleryVisibilityObserver.observe(galleryContainer);
     }
 
     let resizeDebounceTimeout;
@@ -716,7 +749,6 @@ if (track && prevBtn && nextBtn) {
 
     setTimeout(() => {
         updateSliderPosition();
-        startAutoSlide();
     }, 150);
 }
 
@@ -727,12 +759,12 @@ const modalCaption = document.getElementById('modalCaption');
 const modalClose = document.getElementById('modalClose');
 
 if (galleryModal && modalImg && modalClose) {
-    const galleryItems = document.querySelectorAll('.gallery-item');
+    const galleryItems = document.querySelectorAll('.gallery-item, .event-photo-card');
 
     galleryItems.forEach(item => {
         item.addEventListener('click', () => {
             const img = item.querySelector('img');
-            const caption = item.querySelector('.gallery-caption');
+            const caption = item.querySelector('.gallery-caption, .photo-caption');
 
             if (img) {
                 modalImg.src = img.src;
@@ -831,8 +863,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    const elementsToReveal = document.querySelectorAll('.reveal-on-scroll');
-    elementsToReveal.forEach(el => scrollObserver.observe(el));
+    const revealDirections = ['bottom', 'left', 'right'];
+    const currentPage = window.location.pathname.toLowerCase();
+    const isEventsPage = currentPage.endsWith('/events.html');
+    const isAchievementPage = currentPage.endsWith('/achievement.html');
+    const elementsToReveal = Array.from(document.querySelectorAll('.reveal-on-scroll'));
+    const sectionRevealElements = elementsToReveal.filter(el => !el.parentElement.closest('.reveal-on-scroll'));
+
+    sectionRevealElements.forEach((el, index) => {
+        const revealDirection = isEventsPage
+            ? 'bottom'
+            : isAchievementPage
+                ? (index % 2 === 0 ? 'left' : 'right')
+                : revealDirections[Math.floor(Math.random() * revealDirections.length)];
+        el.classList.add(`reveal-from-${revealDirection}`);
+
+        // Child elements stay visible within their parent so the whole section
+        // enters the viewport as one group instead of animating card by card.
+        el.querySelectorAll('.reveal-on-scroll').forEach(child => child.classList.add('is-visible'));
+        scrollObserver.observe(el);
+    });
 
     // Bind dynamic cursor tracking for radial card overlays
     const interactiveCards = document.querySelectorAll('.qa-item, .affiliation-wide-card, .message-card');
@@ -1421,6 +1471,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentStep = 0;
     let autoSlideInterval = null;
+    let execIsOnScreen = false;
 
     function getVisibleCardsCount() {
         return window.innerWidth <= 768 ? 1 : 3;
@@ -1481,6 +1532,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function startAutoSlide() {
+        if (!execIsOnScreen) return;
         if (!autoSlideInterval) {
             autoSlideInterval = setInterval(nextSlide, 3000);
         }
@@ -1514,8 +1566,18 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSliderPosition();
     });
 
+    const execVisibilityObserver = new IntersectionObserver((entries) => {
+        execIsOnScreen = entries[0].isIntersecting;
+        if (execIsOnScreen) {
+            startAutoSlide();
+        } else {
+            stopAutoSlide();
+        }
+    }, { threshold: 0.2 });
+
+    execVisibilityObserver.observe(wrapper);
+
     createDots();
-    startAutoSlide();
 });
 
 // Carousel Autoplay & Viewport Intersection Controls
