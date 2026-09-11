@@ -1,3 +1,107 @@
+// Individually drifting science doodles for the page background.
+// Unlike a scrolling background image, no two doodles share a timeline or path.
+function initializeBackgroundDoodles() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'background-doodles';
+    canvas.setAttribute('aria-hidden', 'true');
+    document.body.prepend(canvas);
+
+    const ctx = canvas.getContext('2d');
+    const doodles = [];
+    let frameId;
+    let width = 0;
+    let height = 0;
+
+    function makeDoodle() {
+        const size = 10 + Math.random() * 14;
+        return {
+            x: Math.random() * width,
+            y: Math.random() * height,
+            size,
+            type: Math.floor(Math.random() * 8),
+            vx: (Math.random() - 0.5) * 0.18,
+            vy: (Math.random() - 0.5) * 0.18,
+            turnAt: performance.now() + 1800 + Math.random() * 5000,
+            rotation: Math.random() * Math.PI * 2,
+            spin: (Math.random() - 0.5) * 0.002
+        };
+    }
+
+    function resize() {
+        const ratio = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.round(width * ratio);
+        canvas.height = Math.round(height * ratio);
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        const count = Math.max(150, Math.min(280, Math.round(width * height / 6000)));
+        doodles.length = 0;
+        for (let i = 0; i < count; i++) doodles.push(makeDoodle());
+    }
+
+    function drawDoodle(doodle) {
+        ctx.save();
+        ctx.translate(doodle.x, doodle.y);
+        ctx.rotate(doodle.rotation);
+        ctx.strokeStyle = '#0f5370';
+        ctx.fillStyle = '#0f5370';
+        ctx.lineWidth = 1.15;
+        const s = doodle.size;
+        ctx.beginPath();
+        if (doodle.type === 0) { // atom
+            ctx.ellipse(0, 0, s, s * 0.34, 0, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, s, s * 0.34, Math.PI / 3, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, s, s * 0.34, -Math.PI / 3, 0, Math.PI * 2);
+            ctx.stroke(); ctx.beginPath(); ctx.arc(0, 0, 1.8, 0, Math.PI * 2); ctx.fill();
+        } else if (doodle.type === 1) { // flask
+            ctx.moveTo(-s * .25, -s); ctx.lineTo(s * .25, -s); ctx.lineTo(s * .25, -s * .35);
+            ctx.lineTo(s * .65, s * .65); ctx.lineTo(-s * .65, s * .65); ctx.lineTo(-s * .25, -s * .35); ctx.closePath(); ctx.stroke();
+        } else if (doodle.type === 2) { // constellation
+            ctx.arc(-s * .6, -s * .25, 1.7, 0, Math.PI * 2); ctx.arc(s * .55, -s * .55, 1.5, 0, Math.PI * 2); ctx.arc(s * .2, s * .6, 1.8, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(-s * .6, -s * .25); ctx.lineTo(s * .55, -s * .55); ctx.lineTo(s * .2, s * .6); ctx.closePath(); ctx.stroke();
+        } else if (doodle.type === 3) { // planet
+            ctx.arc(0, 0, s * .35, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.ellipse(0, 0, s, s * .27, 0, 0, Math.PI * 2); ctx.stroke();
+        } else if (doodle.type === 4) { // wave
+            ctx.moveTo(-s, 0); ctx.quadraticCurveTo(-s * .5, -s * .6, 0, 0); ctx.quadraticCurveTo(s * .5, s * .6, s, 0); ctx.stroke();
+        } else { // science formula
+            const formulas = ['E = mc²', 'F = ma', 'pV = nRT'];
+            ctx.font = `600 ${Math.max(10, s * .72)}px "Segoe UI", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(formulas[doodle.type - 5], 0, 0);
+        }
+        ctx.restore();
+    }
+
+    function animate(now) {
+        ctx.clearRect(0, 0, width, height);
+        doodles.forEach((doodle) => {
+            if (now > doodle.turnAt) {
+                doodle.vx += (Math.random() - .5) * .12;
+                doodle.vy += (Math.random() - .5) * .12;
+                const speed = Math.hypot(doodle.vx, doodle.vy);
+                if (speed > .32) { doodle.vx *= .32 / speed; doodle.vy *= .32 / speed; }
+                doodle.turnAt = now + 1800 + Math.random() * 5000;
+            }
+            doodle.x += doodle.vx; doodle.y += doodle.vy; doodle.rotation += doodle.spin;
+            if (doodle.x < -doodle.size) doodle.x = width + doodle.size;
+            if (doodle.x > width + doodle.size) doodle.x = -doodle.size;
+            if (doodle.y < -doodle.size) doodle.y = height + doodle.size;
+            if (doodle.y > height + doodle.size) doodle.y = -doodle.size;
+            drawDoodle(doodle);
+        });
+        frameId = requestAnimationFrame(animate);
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+    frameId = requestAnimationFrame(animate);
+    return () => { cancelAnimationFrame(frameId); window.removeEventListener('resize', resize); canvas.remove(); };
+}
+
 // Universal Particle Engine configuration helper
 function initializeParticles(containerElement, canvasElement) {
     if (!containerElement || !canvasElement) return;
@@ -842,6 +946,8 @@ function startHeroCounters() {
 
 // --- INTERSECTION OBSERVER & GENERAL SCROLL REVEAL ---
 document.addEventListener('DOMContentLoaded', () => {
+    initializeBackgroundDoodles();
+
     const heroStatBoxes = document.querySelectorAll('#hero .hero-stats .stat-box');
     heroStatBoxes.forEach((box) => {
         box.style.opacity = '0';
