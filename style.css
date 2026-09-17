@@ -2855,6 +2855,17 @@ footer {
     box-sizing: border-box;
 }
 
+/* Keep card-like div interactions in sync with the affiliation cards. */
+:is(.stat-box, .card, .gallery-item, .qa-item, .affiliation-wide-card,
+    .message-card, .interactive-advisor-card, .event-photo-card,
+    .achievement-text-block, .single-event-container),
+.exec-carousel-track .exec-card {
+    transition: background-color 0.4s var(--transition-smooth),
+        transform 0.3s var(--transition-smooth),
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
 /* Container Background */
 .header-container {
     background-color: #0d151d; /* Dark slate background */
@@ -2945,6 +2956,34 @@ h2 {
     box-shadow: var(--shadow-sm);
     text-align: center;
     transition: background-color 0.4s var(--transition-smooth), color 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Once revealed, cards must return to their normal hover timing.  Without this,
+   the reveal transition (and its stagger delay) also controls mouse hover. */
+.card.reveal-on-scroll.is-visible {
+    transition: background-color 0.12s ease-out,
+        color 0.12s ease-out,
+        transform 0.12s ease-out,
+        box-shadow 0.12s ease-out;
+    transition-delay: 0s;
+}
+
+/* The reveal transform is more specific than .card:hover, so restate the
+   interactive state here to ensure every revealed card responds on pointer enter. */
+.card.reveal-on-scroll.is-visible:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(15, 83, 112, 0.25);
+}
+
+/* The welcome and events grids add stagger delays with a more specific selector.
+   Clear that delay after reveal and use the affiliation-card timing for hover. */
+.grid .card.reveal-on-scroll.is-visible {
+    transition: background-color 0.4s var(--transition-smooth),
+        transform 0.3s var(--transition-smooth),
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+    transition-delay: 0s;
 }
 
 /* Make the image container a clean square */

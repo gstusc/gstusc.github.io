@@ -37,7 +37,9 @@ function initializeBackgroundDoodles() {
         canvas.width = Math.round(width * ratio);
         canvas.height = Math.round(height * ratio);
         ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-        const count = Math.max(150, Math.min(280, Math.round(width * height / 6000)));
+        // A denser field keeps the motion visible across wide displays without
+        // letting the animation grow unbounded on very large screens.
+        const count = Math.max(225, Math.min(420, Math.round(width * height / 4000)));
         doodles.length = 0;
         for (let i = 0; i < count; i++) doodles.push(makeDoodle());
     }
@@ -1437,9 +1439,11 @@ if (atomCanvas && typeof THREE !== 'undefined') {
 
         // Model rotation
         const desiredY = elapsedTime * 0.04 + targetRotationY;
+        // Frame-rate-independent, quick pointer response for the atomic model.
+        const pointerResponse = 1 - Math.exp(-18 * delta);
 
-        atomGroup.rotation.y += (desiredY - atomGroup.rotation.y) * 0.05;
-        atomGroup.rotation.x += (targetRotationX - atomGroup.rotation.x) * 0.05;
+        atomGroup.rotation.y += (desiredY - atomGroup.rotation.y) * pointerResponse;
+        atomGroup.rotation.x += (targetRotationX - atomGroup.rotation.x) * pointerResponse;
 
         // Quantum cloud rotation
         quantumCloud.rotation.x = elapsedTime * 0.02;

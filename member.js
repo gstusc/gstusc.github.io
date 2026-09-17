@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultCountBox = document.getElementById('searchResultCount');
     const notFoundBox = document.getElementById('membershipNotFound');
 
-// Dynamic session calculation helper based on GSTU/BSMRSTU batch codes
+    // Dynamic session calculation helper based on GSTU/BSMRSTU batch codes
     const calculateSession = (clubId) => {
         if (!clubId) return '';
         const batchCode = clubId.substring(0, 2);
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "23SC070", name: "Afzal Hossen Kawar", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC071", name: "Tanjima Hafiz", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC072", name: "Afifa Khatun Bristy", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
-        { clubId: "23SC073", name: "Jiniya Khatun", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "23SC073", name: "Mst Jiniya Khatun", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC074", name: "Janntun Jami", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC075", name: "Parvez Ahmmed", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC076", name: "Swagata Mandol", dept: "Pharmacy", faculty: "Faculty of Life Science" },
@@ -230,6 +230,16 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "23SC117", name: "Ela Akter", dept: "Psychology", faculty: "Faculty of Life Science" },
         { clubId: "23SC118", name: "S. M Al-Amin", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Agriculture" },
         { clubId: "23SC119", name: "Rezoan Sharafat", dept: "Pharmacy", faculty: "Faculty of Life Science" },
+        { clubId: "23SC120", name: "Kazi Zahid Hasan", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "23SC121", name: "S M Al-Amin Nishan", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
+        { clubId: "23SC122", name: "Md Zubayer", dept: "Pharmacy", faculty: "Faculty of Life Sciences" },
+        { clubId: "23SC123", name: "Nur Hasan Sharabon", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "23SC124", name: "Jhuma Akhter", dept: "Botany", faculty: "Faculty of Life Sciences" },
+        { clubId: "23SC125", name: "Ayon Suvro Adhikary", dept: "Architecture", faculty: "Faculty of Engineering" },
+        { clubId: "23SC126", name: "Md. Rifat Islam", dept: "Food Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "23SC127", name: "Md Khademul Islam", dept: "Agriculture", faculty: "Faculty of Life Sciences" },
+        { clubId: "23SC128", name: "Nure Jannat Akhi", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
+        { clubId: "23SC129", name: "MD Atikur Rahman", dept: "Biotechnology and Genetic Engineering", faculty: "Faculty of Life Sciences" },
 
         // --- Batch 24SC ---
         { clubId: "24SC001", name: "Md. Al Amin Hossain", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
@@ -304,6 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "24SC070", name: "Jahid Hsan", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
         { clubId: "24SC071", name: "Umme Habiba Maisha", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
         { clubId: "24SC072", name: "Siratul Binte Bashar", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "24SC073", name: "Suronjit Saha Shuvo", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "24SC074", name: "Md Shamim Hasan Akash", dept: "Computer Science and Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "24SC075", name: "Md. Shihab Ahamad", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Sciences" },
+        { clubId: "24SC076", name: "Sazzad Hosan Arif", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "24SC077", name: "Sadia Sultana Disha", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
+        { clubId: "24SC078", name: "Md Sajid Mostafa", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Sciences" },
+        { clubId: "24SC079", name: "Pratim Mandal", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
+        { clubId: "24SC080", name: "Md. Abu Huraira", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
 
         // --- Batch 25SC ---
         { clubId: "25SC001", name: "Md. Burhanur Rahman", dept: "Animal Science and Veterinary Medicine", faculty: "Faculty of Animal Science and Veterinary Medicine", session: "2022-23" },
@@ -419,7 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "25SC149", name: "Md. Rasel Mizi", dept: "Statistics", faculty: "Faculty of Science", session: "2022-23" },
         { clubId: "25SC151", name: "Raisa Khan", dept: "Botany", faculty: "Faculty of Life Science", session: "2022-23" },
         { clubId: "25SC152", name: "Jarin Akter Juthi", dept: "Chemistry", faculty: "Faculty of Science", session: "2023-24" },
-        { clubId: "25SC153", name: "Onima Akter", dept: "Chemistry", faculty: "Faculty of Science", session: "2023-24" },
+        { clubId: "25SC153", name: "Mst. Onima Akter", dept: "Chemistry", faculty: "Faculty of Science", session: "2023-24" },
         { clubId: "25SC154", name: "Sanjida Akter", dept: "Chemistry", faculty: "Faculty of Science", session: "2023-24" },
         { clubId: "25SC155", name: "Umme Erhana Binta Emdad Erin", dept: "Chemistry", faculty: "Faculty of Science", session: "2023-24" },
         { clubId: "25SC158", name: "Shafin Ahmed", dept: "Pharmacy", faculty: "Faculty of Life Science", session: "2023-24" },
@@ -683,7 +701,10 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "25SC477", name: "Nusrat Zahan Prova", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science", session: "2023-2024" },
         { clubId: "25SC478", name: "Fahad Nakib Nabil", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science", session: "2024-25" },
         { clubId: "25SC479", name: "Hossain Mohammad Afradh", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science", session: "2024-25" },
-        { clubId: "25SC480", name: "Afia Neshat Jui", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science", session: "2024-25" }
+        { clubId: "25SC480", name: "Afia Neshat Jui", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science", session: "2024-25" },
+        { clubId: "25SC481", name: "Mohuya Khatun", dept: "Food Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "25SC482", name: "Munira Khondoker", dept: "Computer Science and Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "25SC483", name: "Raihan", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
     ];
 
     // Populate missing session values across the dataset dynamically
