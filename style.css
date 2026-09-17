@@ -3067,6 +3067,15 @@ h2 {
     border-bottom-color: rgba(32, 58, 67, 0.12) !important;
 }
 
+/* Large searches stay within the height of three member cards. */
+#searchResultsContainer.has-scrollable-results {
+    max-height: var(--membership-results-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 8px;
+    scrollbar-gutter: stable;
+}
+
 #membershipNotFound {
     color: #b42318 !important;
 }

@@ -733,6 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clear previous results
             resultsContainer.innerHTML = '';
+            resultsContainer.classList.remove('has-scrollable-results');
+            resultsContainer.style.removeProperty('--membership-results-height');
 
             if (matches.length > 0) {
                 notFoundBox.style.display = 'none';
@@ -790,6 +792,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultsFragment.appendChild(card);
                 });
                 resultsContainer.appendChild(resultsFragment);
+
+                // Keep broad searches contained to a three-card viewport so the
+                // membership section does not lengthen the rest of the page.
+                if (matches.length > 3) {
+                    const cards = resultsContainer.querySelectorAll('.interactive-qa-card');
+                    const containerStyles = window.getComputedStyle(resultsContainer);
+                    const gap = parseFloat(containerStyles.rowGap || containerStyles.gap) || 0;
+                    const visibleHeight = Array.from(cards)
+                        .slice(0, 3)
+                        .reduce((height, card) => height + card.offsetHeight, 0) + (gap * 2);
+
+                    resultsContainer.style.setProperty('--membership-results-height', `${visibleHeight}px`);
+                    resultsContainer.classList.add('has-scrollable-results');
+                }
             } else {
                 resultCountBox.style.display = 'none';
                 notFoundBox.style.display = 'block';
