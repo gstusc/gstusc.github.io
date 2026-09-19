@@ -1493,6 +1493,12 @@ nav ul li a.active {
 .contact-email-link {
     color: var(--primary-color);
     text-decoration: none;
+    cursor: pointer;
+}
+
+.contact-email-link:hover,
+.contact-email-link:focus-visible {
+    color: var(--secondary-color);
 }
 
 .contact-social-card {
