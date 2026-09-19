@@ -108,6 +108,7 @@ function initializeBackgroundDoodles() {
 function initializeParticles(containerElement, canvasElement) {
     if (!containerElement || !canvasElement) return;
     const ctx = canvasElement.getContext('2d');
+    const isTouchScreen = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
     let particlesArray = [];
     let animationFrameId = null;
     let resizeTimeout = null;
@@ -119,8 +120,11 @@ function initializeParticles(containerElement, canvasElement) {
     };
 
     function resizeCanvas() {
-        canvasElement.width = containerElement.offsetWidth;
-        canvasElement.height = containerElement.offsetHeight;
+        // getBoundingClientRect reflects the final mobile layout more reliably
+        // than offset dimensions while the fixed header/footer is being painted.
+        const bounds = containerElement.getBoundingClientRect();
+        canvasElement.width = Math.max(1, Math.round(bounds.width));
+        canvasElement.height = Math.max(1, Math.round(bounds.height));
         initParticles();
     }
 
@@ -189,7 +193,10 @@ function initializeParticles(containerElement, canvasElement) {
     function initParticles() {
         particlesArray = [];
         let numberOfParticles = Math.floor((canvasElement.width * canvasElement.height) / 4000);
-        if (numberOfParticles < 15) numberOfParticles = 15;
+        // Short mobile headers otherwise contain too few particles to notice.
+        if (numberOfParticles < (isTouchScreen ? 24 : 15)) {
+            numberOfParticles = isTouchScreen ? 24 : 15;
+        }
 
         for (let i = 0; i < numberOfParticles; i++) {
             let size = (Math.random() * 2) + 1;
@@ -202,7 +209,8 @@ function initializeParticles(containerElement, canvasElement) {
             let directionX = Math.cos(angle) * speed;
             let directionY = Math.sin(angle) * speed;
 
-            let color = 'rgba(0, 168, 255, ' + (Math.random() * 0.4 + 0.3) + ')';
+            const opacity = isTouchScreen ? (Math.random() * 0.25 + 0.65) : (Math.random() * 0.4 + 0.3);
+            let color = 'rgba(0, 200, 255, ' + opacity + ')';
 
             particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
         }
@@ -219,7 +227,7 @@ function initializeParticles(containerElement, canvasElement) {
     }
 
     function connectNodes() {
-        let maxDistance = 65;
+        let maxDistance = isTouchScreen ? 80 : 65;
         for (let a = 0; a < particlesArray.length; a++) {
             for (let b = a + 1; b < particlesArray.length; b++) {
                 let dx = particlesArray[a].x - particlesArray[b].x;
@@ -227,7 +235,7 @@ function initializeParticles(containerElement, canvasElement) {
                 let distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < maxDistance) {
-                    let opacity = (1 - (distance / maxDistance)) * 0.12;
+                    let opacity = (1 - (distance / maxDistance)) * (isTouchScreen ? 0.28 : 0.12);
                     ctx.strokeStyle = `rgba(0, 168, 255, ${opacity})`;
                     ctx.lineWidth = 1;
                     ctx.beginPath();
@@ -241,6 +249,8 @@ function initializeParticles(containerElement, canvasElement) {
 
     window.addEventListener('resize', debouncedResize);
     resizeCanvas();
+    // Mobile browsers can report an interim height while custom elements mount.
+    requestAnimationFrame(resizeCanvas);
     animate();
 
     return function cleanup() {
@@ -613,7 +623,7 @@ class UniversalFooter extends HTMLElement {
                     <p>Inspiring innovation, research, and technical excellence among the bright minds of GSTU. Your workspace to shape tomorrow.</p>
                 </div>
                 
-                <div class="footer-col">
+                <div class="footer-col footer-links-column">
                     <h3>Quick Links</h3>
                     <ul>
                         <li><a href="index.html">Home</a></li>
@@ -623,7 +633,7 @@ class UniversalFooter extends HTMLElement {
                     </ul>
                 </div>
                 
-                <div class="footer-col">
+                <div class="footer-col footer-links-column">
                     <h3>Resources</h3>
                     <ul>
                         <li><a href="committee.html">Executive Committee</a></li>
@@ -858,50 +868,81 @@ if (track && prevBtn && nextBtn) {
     }, 150);
 }
 
-// --- GALLERY FULL-SIZE IMAGE MODAL HANDLER ---
-const galleryModal = document.getElementById('galleryModal');
-const modalImg = document.getElementById('modalImg');
-const modalCaption = document.getElementById('modalCaption');
-const modalClose = document.getElementById('modalClose');
+// --- SITE-WIDE FULL-SIZE IMAGE PREVIEW ---
+// A single modal is reused for every image, including pages that do not have
+// gallery markup of their own.
+let galleryModal = document.getElementById('galleryModal');
 
-if (galleryModal && modalImg && modalClose) {
-    const galleryItems = document.querySelectorAll('.gallery-item, .event-photo-card');
-
-    galleryItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const img = item.querySelector('img');
-            const caption = item.querySelector('.gallery-caption, .photo-caption');
-
-            if (img) {
-                modalImg.src = img.src;
-                modalImg.alt = img.alt || 'Full View Image';
-                modalCaption.textContent = caption ? caption.textContent : (img.alt || '');
-
-                galleryModal.classList.add('show');
-                galleryModal.setAttribute('aria-hidden', 'false');
-            }
-        });
-    });
-
-    const closeModal = () => {
-        galleryModal.classList.remove('show');
-        galleryModal.setAttribute('aria-hidden', 'true');
-    };
-
-    modalClose.addEventListener('click', closeModal);
-
-    galleryModal.addEventListener('click', (e) => {
-        if (e.target === galleryModal) {
-            closeModal();
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && galleryModal.classList.contains('show')) {
-            closeModal();
-        }
-    });
+if (!galleryModal) {
+    galleryModal = document.createElement('div');
+    galleryModal.id = 'galleryModal';
+    galleryModal.className = 'gallery-modal';
+    galleryModal.setAttribute('aria-hidden', 'true');
+    galleryModal.innerHTML = `
+        <button class="modal-close" id="modalClose" type="button" aria-label="Close image preview">&times;</button>
+        <div class="modal-content-wrapper" role="dialog" aria-modal="true" aria-label="Image preview">
+            <img class="modal-image" id="modalImg" src="" alt="">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>`;
+    document.body.appendChild(galleryModal);
 }
+
+const modalImg = galleryModal.querySelector('#modalImg');
+const modalCaption = galleryModal.querySelector('#modalCaption');
+const modalClose = galleryModal.querySelector('#modalClose');
+let previewTrigger = null;
+let previousBodyOverflow = '';
+
+const closeImagePreview = () => {
+    if (!galleryModal.classList.contains('show')) return;
+    galleryModal.classList.remove('show');
+    galleryModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = previousBodyOverflow;
+    previewTrigger?.focus();
+};
+
+const openImagePreview = (img) => {
+    if (!img.currentSrc && !img.src) return;
+    previewTrigger = img;
+    previousBodyOverflow = document.body.style.overflow;
+    modalImg.src = img.currentSrc || img.src;
+    modalImg.alt = img.alt || 'Full-size image preview';
+    modalCaption.textContent = img.alt || '';
+    galleryModal.classList.add('show');
+    galleryModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    modalClose.focus();
+};
+
+// The club logo is navigation/branding rather than previewable content.
+document.querySelectorAll('img:not(.modal-image):not([src*="image/official/logo.webp"])').forEach((img) => {
+    img.classList.add('image-preview-trigger');
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('role', 'button');
+    img.setAttribute('aria-label', `Open full-size preview of ${img.alt || 'image'}`);
+
+    img.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openImagePreview(img);
+    });
+    img.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openImagePreview(img);
+        }
+    });
+});
+
+modalClose.setAttribute('role', 'button');
+modalClose.setAttribute('tabindex', '0');
+modalClose.addEventListener('click', closeImagePreview);
+galleryModal.addEventListener('click', (event) => {
+    if (event.target === galleryModal) closeImagePreview();
+});
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeImagePreview();
+});
 
 // --- HERO STAT BOXES BOUNCE & ENTRY ANIMATION ---
 function animateHeroStatBoxes() {

@@ -109,6 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "22SC087", name: "Jarin Sultana Akhi", dept: "Chemistry", faculty: "Faculty of Science" },
         { clubId: "22SC088", name: "Dhurbo Chakrabarty", dept: "Physics", faculty: "Faculty of Science" },
         { clubId: "22SC089", name: "Maria Rahman", dept: "Psychology", faculty: "Faculty of Life Science" },
+        { clubId: "22SC090", name: "Shakibul Alam Nirjon", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science" },
+        { clubId: "22SC091", name: "Md. Sayem Uddin Musa", dept: "Computer Science and Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "22SC092", name: "Md. Fazle Rabbi", dept: "Pharmacy", faculty: "Faculty of Life Science" },
+        { clubId: "22SC093", name: "Md. Fazlul Karim Sabit", dept: "Biotechnology and Genetic Engineering", faculty: "Faculty of Life Science" },
+        { clubId: "22SC094", name: "Rayhan Hossain Raja", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science" },
+        { clubId: "22SC095", name: "Saurav Sen", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
 
         // --- Batch 23SC ---
         { clubId: "23SC001", name: "Md. Papul Mia", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
@@ -232,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "23SC119", name: "Rezoan Sharafat", dept: "Pharmacy", faculty: "Faculty of Life Science" },
         { clubId: "23SC120", name: "Kazi Jahid Hasan", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC121", name: "S M Al-Amin Nishan", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
-        { clubId: "23SC122", name: "Md Zubayer", dept: "Pharmacy", faculty: "Faculty of Life Sciences" },
         { clubId: "23SC123", name: "Nur Hasan Sharabon", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
         { clubId: "23SC124", name: "Jhuma Akhter", dept: "Botany", faculty: "Faculty of Life Sciences" },
         { clubId: "23SC125", name: "Ayon Suvro Adhikary", dept: "Architecture", faculty: "Faculty of Engineering" },
@@ -240,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "23SC127", name: "Md Khademul Islam", dept: "Agriculture", faculty: "Faculty of Life Sciences" },
         { clubId: "23SC128", name: "Nure Jannat Akhi", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
         { clubId: "23SC129", name: "MD Atikur Rahman", dept: "Biotechnology and Genetic Engineering", faculty: "Faculty of Life Sciences" },
+        { clubId: "23SC130", name: "Md. Hafizul Islam", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
+        { clubId: "23SC131", name: "Md. Fahmid Islam", dept: "Applied Chemistry and Chemical Engineering", faculty: "Faculty of Engineering" },
 
         // --- Batch 24SC ---
         { clubId: "24SC001", name: "Md. Al Amin Hossain", dept: "Civil Engineering", faculty: "Faculty of Engineering" },
@@ -322,6 +329,13 @@ document.addEventListener('DOMContentLoaded', () => {
         { clubId: "24SC078", name: "Md Sajid Mostafa", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Sciences" },
         { clubId: "24SC079", name: "Pratim Mandal", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
         { clubId: "24SC080", name: "Md. Abu Huraira", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Sciences" },
+        { clubId: "24SC081", name: "Kazi Lamia Karim", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science" },
+        { clubId: "24SC082", name: "Mehedi Hasan Noyon", dept: "Physics", faculty: "Faculty of Science" },
+        { clubId: "24SC083", name: "Hasibul Hasan (Shanto)", dept: "Botany", faculty: "Faculty of Life Science" },
+        { clubId: "24SC084", name: "Rubina Akter Asha", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Science" },
+        { clubId: "24SC085", name: "Jannatul Nessa July", dept: "Botany", faculty: "Faculty of Life Science" },
+        { clubId: "24SC086", name: "Salma Akter Nure Zahan", dept: "Fisheries and Marine Bioscience", faculty: "Faculty of Life Science" },
+        { clubId: "24SC087", name: "Anondita Medha", dept: "Biochemistry and Molecular Biology", faculty: "Faculty of Life Science" },
 
         // --- Batch 25SC ---
         { clubId: "25SC001", name: "Md. Burhanur Rahman", dept: "Animal Science and Veterinary Medicine", faculty: "Faculty of Animal Science and Veterinary Medicine", session: "2022-23" },

@@ -165,6 +165,11 @@ body.loading {
     body::after {
         animation: none;
     }
+
+    /* Keep the header and footer particle field legible on touch screens. */
+    .particle-canvas {
+        opacity: 1;
+    }
 }
 
 /* ==========================================
@@ -976,6 +981,12 @@ nav ul li a.active {
 .modal-close:hover {
     color: var(--accent-color);
     transform: scale(1.15);
+}
+
+.image-preview-trigger:focus-visible,
+.modal-close:focus-visible {
+    outline: 3px solid var(--accent-color);
+    outline-offset: 4px;
 }
 
 /* ==========================================
@@ -2909,11 +2920,26 @@ h2 {
 
 /* Custom Footer Logo Mobile Centering */
 @media (max-width: 850px) {
+    .footer-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px 16px;
+    }
+
     .footer-container .footer-col:first-child {
+        grid-column: 1 / -1;
         display: flex;
         flex-direction: column;
         align-items: center;
         text-align: center;
+    }
+
+    .footer-links-column {
+        min-width: 0;
+        text-align: center;
+    }
+
+    .footer-container .footer-col:last-child {
+        grid-column: 1 / -1;
     }
 
     .footer-logo-link {
@@ -2933,12 +2959,12 @@ h2 {
 @media (max-width: 850px) {
     /* Targets any container, canvas, or section housing the model */
     #canvas-container,
+    #atom-canvas,
     #atomic-model,
     #atomic-model-canvas,
     .atomic-model,
     .atomic-model-container,
-    .hero-canvas,
-    canvas {
+    .hero-canvas {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
