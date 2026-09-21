@@ -722,6 +722,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // Populate missing session values across the dataset dynamically
+    const batchOrder = { '25': 0, '24': 1, '23': 2 };
     const sampleMembers = rawMembers.map(member => {
         const session = member.session || calculateSession(member.clubId);
         return {
@@ -733,6 +734,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 .join(' ')
                 .toLowerCase()
         };
+    }).sort((firstMember, secondMember) => {
+        const firstId = /^([0-9]{2})SC([0-9]+)$/i.exec(firstMember.clubId || '');
+        const secondId = /^([0-9]{2})SC([0-9]+)$/i.exec(secondMember.clubId || '');
+        const firstBatchOrder = batchOrder[firstId?.[1]] ?? Number.MAX_SAFE_INTEGER;
+        const secondBatchOrder = batchOrder[secondId?.[1]] ?? Number.MAX_SAFE_INTEGER;
+
+        if (firstBatchOrder !== secondBatchOrder) {
+            return firstBatchOrder - secondBatchOrder;
+        }
+
+        return Number(firstId?.[2] || 0) - Number(secondId?.[2] || 0);
     });
 
     if (searchForm && searchInput) {
