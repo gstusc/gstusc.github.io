@@ -626,18 +626,17 @@ class UniversalFooter extends HTMLElement {
                 <div class="footer-col footer-links-column">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About Club</a></li>
-                        <li><a href="events.html">Events & Fairs</a></li>
-                        <li><a href="teams.html">Our Divisions</a></li>
+                        <li><a href="https://gstu.edu.bd/s/">Gopalganj Science and Technology University</a></li>
+                        <li><a href="https://most.gov.bd">Ministry of Science and Technology</a></li>
+                        <li><a href="https://nmst.gov.bd">National Museum of Science and Technology</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-col footer-links-column">
                     <h3>Resources</h3>
                     <ul>
+                        <li><a href="index.html">Home</a></li>
                         <li><a href="committee.html">Executive Committee</a></li>
-                        <li><a href="advisor.html">Advisor Panel</a></li>
                         <li><a href="achievement.html">Achievement</a></li>
                         <li><a href="contact.html">Contact Support</a></li>
                     </ul>
