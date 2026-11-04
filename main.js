@@ -840,6 +840,9 @@ if (track && prevBtn && nextBtn) {
     if (galleryContainer) {
         galleryContainer.addEventListener('mouseenter', stopAutoSlide);
         galleryContainer.addEventListener('mouseleave', startAutoSlide);
+        galleryContainer.addEventListener('touchstart', stopAutoSlide, { passive: true });
+        galleryContainer.addEventListener('touchend', startAutoSlide, { passive: true });
+        galleryContainer.addEventListener('touchcancel', startAutoSlide, { passive: true });
 
         const galleryVisibilityObserver = new IntersectionObserver((entries) => {
             galleryIsOnScreen = entries[0].isIntersecting;
@@ -1710,6 +1713,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     wrapper.addEventListener('mouseenter', stopAutoSlide);
     wrapper.addEventListener('mouseleave', startAutoSlide);
+    wrapper.addEventListener('touchstart', stopAutoSlide, { passive: true });
+    wrapper.addEventListener('touchend', startAutoSlide, { passive: true });
+    wrapper.addEventListener('touchcancel', startAutoSlide, { passive: true });
 
     window.addEventListener('resize', () => {
         createDots();
@@ -1879,6 +1885,18 @@ document.addEventListener('DOMContentLoaded', () => {
             isHovered = false;
             startTimer();
         });
+
+        section.addEventListener('touchstart', () => {
+            isHovered = true;
+            stopTimer();
+        }, { passive: true });
+
+        const resumeAfterTouch = () => {
+            isHovered = false;
+            startTimer();
+        };
+        section.addEventListener('touchend', resumeAfterTouch, { passive: true });
+        section.addEventListener('touchcancel', resumeAfterTouch, { passive: true });
 
         // Intersection Observer: Start auto-scrolling ONLY when section becomes visible
         const observer = new IntersectionObserver((entries) => {
