@@ -4,6 +4,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainer = document.getElementById('searchResultsContainer');
     const resultCountBox = document.getElementById('searchResultCount');
     const notFoundBox = document.getElementById('membershipNotFound');
+    const certificateOverlay = document.getElementById('certificateOverlay');
+    const certificateTemplate = document.getElementById('certificateTemplate');
+    const certificateFields = document.getElementById('certificateFields');
+    const certificateName = document.getElementById('certificateName');
+    const certificateDepartment = document.getElementById('certificateDepartment');
+    const certificateFaculty = document.getElementById('certificateFaculty');
+    const certificateClubId = document.getElementById('certificateClubId');
+    const closeCertificate = document.getElementById('closeCertificate');
+
+    // Add an entry here when a new session template is uploaded. Field values
+    // are percentage positions on the template, so they remain aligned at any size.
+    const certificateTemplates = {
+        '23SC': {
+            file: 'image/official/Certificate.jpg',
+            positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
+        },
+        '24SC': {
+            file: 'image/official/Certificate.jpg',
+            positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
+        },
+        '25SC': {
+            file: 'image/official/Certificate.jpg',
+            positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
+        }
+    };
+
+    const showCertificate = (member) => {
+        const templateKey = member.clubId.slice(0, 4);
+        const template = certificateTemplates[templateKey];
+        if (!template) return;
+
+        certificateTemplate.src = template.file;
+        certificateFields.style.setProperty('--certificate-name-top', template.positions.name);
+        certificateFields.style.setProperty('--certificate-department-top', template.positions.department);
+        certificateFields.style.setProperty('--certificate-faculty-top', template.positions.faculty);
+        certificateFields.style.setProperty('--certificate-id-top', template.positions.clubId);
+        certificateName.textContent = member.name || '';
+        certificateDepartment.textContent = member.dept || '';
+        certificateDepartment.classList.toggle(
+            'is-compact',
+            (member.dept || '').trim().split(/\s+/).filter(Boolean).length >= 3
+        );
+        certificateFaculty.textContent = (member.faculty || '').replace(/^Faculty of\s+/i, '');
+        certificateClubId.textContent = member.clubId || '';
+        certificateOverlay.classList.add('is-open');
+        certificateOverlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('certificate-open');
+        closeCertificate.focus();
+    };
+
+    const hideCertificate = () => {
+        certificateOverlay.classList.remove('is-open');
+        certificateOverlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('certificate-open');
+    };
+
+    closeCertificate.addEventListener('click', hideCertificate);
+    document.getElementById('printCertificate').addEventListener('click', async () => {
+        // Keep the downloaded PDF consistent with the preview by waiting for
+        // the Allura web font before the browser snapshots the page.
+        if (document.fonts?.ready) await document.fonts.ready;
+        window.print();
+    });
+    certificateOverlay.addEventListener('click', (event) => {
+        if (event.target === certificateOverlay) hideCertificate();
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && certificateOverlay.classList.contains('is-open')) hideCertificate();
+    });
+
+    // Size the scroll area from the rendered cards rather than using a fixed
+    // pixel height, so exactly three results remain visible at every breakpoint.
+    const updateResultsViewport = () => {
+        const cards = resultsContainer.querySelectorAll('.interactive-qa-card');
+
+        if (cards.length <= 3) {
+            resultsContainer.classList.remove('has-scrollable-results');
+            resultsContainer.style.removeProperty('--membership-results-height');
+            return;
+        }
+
+        const containerStyles = window.getComputedStyle(resultsContainer);
+        const gap = parseFloat(containerStyles.rowGap || containerStyles.gap) || 0;
+        const visibleHeight = Array.from(cards)
+            .slice(0, 3)
+            .reduce((height, card) => height + card.offsetHeight, 0) + (gap * 2);
+
+        resultsContainer.style.setProperty('--membership-results-height', `${visibleHeight}px`);
+        resultsContainer.classList.add('has-scrollable-results');
+    };
+
+    window.addEventListener('resize', updateResultsViewport);
 
     // Dynamic session calculation helper based on GSTU/BSMRSTU batch codes
     const calculateSession = (clubId) => {
@@ -806,9 +898,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <strong>${m.session || 'N/A'}</strong>
                         </div>`;
 
+                    const hasCertificateTemplate = certificateTemplates[m.clubId.slice(0, 4)];
                     card.innerHTML = `
-                        <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 15px;">
-                            <h3 style="margin: 0; font-size: 1.3rem; color: var(--accent-color);">${m.name || 'Unnamed Member'}</h3>
+                        <div class="member-result-heading">
+                            <h3>${m.name || 'Unnamed Member'}</h3>
+                            ${hasCertificateTemplate ? '<button type="button" class="certificate-card-button">Certificate</button>' : ''}
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem;">
                             ${rowsHtml}
@@ -818,20 +912,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultsFragment.appendChild(card);
                 });
                 resultsContainer.appendChild(resultsFragment);
+                resultsContainer.querySelectorAll('.certificate-card-button').forEach(button => {
+                    const member = matches[Array.from(resultsContainer.querySelectorAll('.certificate-card-button')).indexOf(button)];
+                    button.addEventListener('click', () => showCertificate(member));
+                });
 
                 // Keep broad searches contained to a three-card viewport so the
                 // membership section does not lengthen the rest of the page.
-                if (matches.length > 3) {
-                    const cards = resultsContainer.querySelectorAll('.interactive-qa-card');
-                    const containerStyles = window.getComputedStyle(resultsContainer);
-                    const gap = parseFloat(containerStyles.rowGap || containerStyles.gap) || 0;
-                    const visibleHeight = Array.from(cards)
-                        .slice(0, 3)
-                        .reduce((height, card) => height + card.offsetHeight, 0) + (gap * 2);
-
-                    resultsContainer.style.setProperty('--membership-results-height', `${visibleHeight}px`);
-                    resultsContainer.classList.add('has-scrollable-results');
-                }
+                updateResultsViewport();
             } else {
                 resultCountBox.style.display = 'none';
                 notFoundBox.style.display = 'block';

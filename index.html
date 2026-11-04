@@ -679,6 +679,26 @@
                 style="display: none; max-width: 600px; margin: 0 auto; padding: 15px; border-radius: var(--radius-md); background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.3); color: #ff6b6b; font-size: 0.95rem; text-align: center;">
                 No matching membership record found. Please check the details and try again.
             </div>
+
+        </div>
+    </div>
+
+    <div class="certificate-overlay" id="certificateOverlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="certificateTitle">
+        <div class="certificate-dialog">
+            <div class="certificate-actions no-print">
+                <button type="button" class="certificate-print" id="printCertificate">Print certificate</button>
+                <button type="button" class="certificate-close" id="closeCertificate" aria-label="Close certificate preview">&times;</button>
+            </div>
+            <article class="certificate-page" id="certificatePage">
+                <img class="certificate-template" id="certificateTemplate" src="image/official/Certificate.jpg" alt="Membership certificate template">
+                <div class="certificate-fields" id="certificateFields" aria-labelledby="certificateTitle">
+                    <span class="certificate-field certificate-field-name" id="certificateName"></span>
+                    <span class="certificate-field certificate-field-department" id="certificateDepartment"></span>
+                    <span class="certificate-field certificate-field-faculty" id="certificateFaculty"></span>
+                    <span class="certificate-field certificate-field-id" id="certificateClubId"></span>
+                </div>
+                <h2 class="sr-only" id="certificateTitle">Membership certificate</h2>
+            </article>
         </div>
     </div>
 

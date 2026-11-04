@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
+
 /* ==========================================
    Base Design Tokens & Dynamic Themes
    ========================================== */
@@ -3104,8 +3106,46 @@ h2 {
     max-height: var(--membership-results-height);
     overflow-y: auto;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
     padding-right: 8px;
     scrollbar-gutter: stable;
+}
+
+.member-result-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 12px; margin-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.member-result-heading h3 { margin: 0; color: var(--accent-color); font-size: 1.3rem; }
+.certificate-card-button { padding: 8px 13px; color: #fff; background: var(--primary-color); border: 0; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+
+.certificate-overlay { position: fixed; z-index: 2000; inset: 0; display: none; align-items: center; justify-content: center; padding: 24px; background: rgba(4, 18, 29, 0.78); }
+.certificate-overlay.is-open { display: flex; }
+.certificate-open { overflow: hidden; }
+.certificate-dialog { width: min(980px, 100%); max-height: 100%; overflow: auto; }
+.certificate-actions { display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 12px; }
+.certificate-print, .certificate-close { color: #fff; border: 0; cursor: pointer; }
+.certificate-print { padding: 10px 16px; background: var(--accent-color); border-radius: var(--radius-sm); font-weight: 700; }
+.certificate-close { width: 40px; height: 40px; background: transparent; font-size: 2rem; line-height: 1; }
+.certificate-page { position: relative; width: 100%; aspect-ratio: 3508 / 2482; overflow: hidden; container-type: inline-size; background: #fff; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); }
+.certificate-template { display: block; width: 100%; height: 100%; object-fit: contain; }
+.certificate-fields { position: absolute; inset: 0; pointer-events: none; color: #111; font-family: 'Allura', cursive; font-size: 2.05cqw; font-weight: 400; text-align: center; }
+.certificate-field { position: absolute; transform: translate(-50%, -50%); line-height: 1.1; white-space: nowrap; }
+.certificate-field-name { top: var(--certificate-name-top); left: 50%; width: 62%; font-size: 2.45em; font-weight: 600; line-height: 0.9; }
+.certificate-field-department { top: var(--certificate-department-top); left: 26%; width: 23%; font-size: 1.1em; font-weight: 700; }
+.certificate-field-department.is-compact { left: 31%; font-size: 0.76em; }
+.certificate-field-faculty { top: var(--certificate-faculty-top); left: 54.2%; width: 17%; font-size: 1.1em; font-weight: 700; }
+.certificate-field-id { top: var(--certificate-id-top); left: 79.7%; width: 15%; font-size: 1.1em; font-weight: 700; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 600px) {
+    .certificate-page { width: 900px; max-width: 100%; }
+}
+
+@media print {
+    @page { size: A4 landscape; margin: 0; }
+    body { margin: 0; }
+    body > * { display: none !important; }
+    #certificateOverlay { display: block !important; position: fixed; inset: 0; width: 297mm; height: 210mm; padding: 0; background: none; }
+    #certificateOverlay .certificate-dialog { width: 296.8mm; max-height: none; margin: 0 auto; overflow: visible; }
+    #certificatePage { position: relative; width: 296.8mm; height: 210mm; aspect-ratio: 3508 / 2482; box-shadow: none; }
+    .no-print { display: none !important; }
 }
 
 #membershipNotFound {
