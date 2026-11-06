@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultCountBox = document.getElementById('searchResultCount');
     const notFoundBox = document.getElementById('membershipNotFound');
     const certificateOverlay = document.getElementById('certificateOverlay');
-    const certificateTemplate = document.getElementById('certificateTemplate');
+    const certificateTemplateImage = document.getElementById('certificateTemplate');
     const certificateFields = document.getElementById('certificateFields');
     const certificateName = document.getElementById('certificateName');
     const certificateDepartment = document.getElementById('certificateDepartment');
@@ -13,33 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const certificateClubId = document.getElementById('certificateClubId');
     const closeCertificate = document.getElementById('closeCertificate');
 
-    // Add an entry here when a new session template is uploaded. Field values
-    // are percentage positions on the template, so they remain aligned at any size.
-    const certificateTemplates = {
-        '23SC': {
-            file: 'image/official/Certificate.jpg',
-            positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
-        },
-        '24SC': {
-            file: 'image/official/Certificate.jpg',
-            positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
-        },
-        '25SC': {
-            file: 'image/official/Certificate.jpg',
-            positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
-        }
+    // One certificate design is shared by every member, regardless of batch.
+    const certificateTemplate = {
+        file: 'image/official/Certificate.jpg',
+        positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
     };
 
     const showCertificate = (member) => {
-        const templateKey = member.clubId.slice(0, 4);
-        const template = certificateTemplates[templateKey];
-        if (!template) return;
-
-        certificateTemplate.src = template.file;
-        certificateFields.style.setProperty('--certificate-name-top', template.positions.name);
-        certificateFields.style.setProperty('--certificate-department-top', template.positions.department);
-        certificateFields.style.setProperty('--certificate-faculty-top', template.positions.faculty);
-        certificateFields.style.setProperty('--certificate-id-top', template.positions.clubId);
+        certificateTemplateImage.src = certificateTemplate.file;
+        certificateFields.style.setProperty('--certificate-name-top', certificateTemplate.positions.name);
+        certificateFields.style.setProperty('--certificate-department-top', certificateTemplate.positions.department);
+        certificateFields.style.setProperty('--certificate-faculty-top', certificateTemplate.positions.faculty);
+        certificateFields.style.setProperty('--certificate-id-top', certificateTemplate.positions.clubId);
         certificateName.textContent = member.name || '';
         certificateDepartment.textContent = member.dept || '';
         certificateDepartment.classList.toggle(
@@ -898,11 +883,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             <strong>${m.session || 'N/A'}</strong>
                         </div>`;
 
-                    const hasCertificateTemplate = certificateTemplates[m.clubId.slice(0, 4)];
                     card.innerHTML = `
                         <div class="member-result-heading">
                             <h3>${m.name || 'Unnamed Member'}</h3>
-                            ${hasCertificateTemplate ? '<button type="button" class="certificate-card-button">Certificate</button>' : ''}
+                            <button type="button" class="certificate-card-button">Certificate</button>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem;">
                             ${rowsHtml}
