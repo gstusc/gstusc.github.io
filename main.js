@@ -283,7 +283,7 @@ class UniversalHeader extends HTMLElement {
         <header>
             <canvas class="particle-canvas"></canvas>
             <div class="nav-container">
-                <a href="index.html" class="logo"> <img src="image/official/logo.webp" height="35px" width="35px" alt="GSTU SC Logo"> GSTU Science Club</a>
+                <a href="index.html" class="logo"> <img src="image/official/logo.webp" height="35" width="35" alt="GSTU SC Logo"><span class="brand-name">GSTU Science Club</span></a>
                 
                 <button class="menu-toggle" aria-label="Toggle Navigation Menu">
                     <span></span>
@@ -310,8 +310,9 @@ class UniversalHeader extends HTMLElement {
                         <li><a href="contact.html">Contact</a></li>
                         <li><a href="about.html">About</a></li>
                         <li class="theme-toggle-li">
-                            <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark and Light Mode">
-                                <span class="theme-icon"></span> <span class="theme-text">Dark</span>
+                            <button class="theme-toggle-btn" id="themeToggleBtn" role="switch" aria-checked="false" aria-label="Toggle dark mode">
+                                <span class="theme-switch-track" aria-hidden="true"><span class="theme-icon"></span></span>
+                                <span class="theme-text">Dark</span>
                             </button>
                         </li>
                     </ul>
@@ -389,12 +390,14 @@ class UniversalHeader extends HTMLElement {
         });
 
         function updateThemeButtonUI(theme) {
+            themeBtn.setAttribute('aria-checked', String(theme === 'dark'));
+            themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Dark mode is on. Switch to light mode' : 'Light mode is on. Switch to dark mode');
             if (theme === 'dark') {
-                themeIcon.innerHTML = sunIcon;
-                themeText.textContent = 'Light';
-            } else {
                 themeIcon.innerHTML = moonIcon;
                 themeText.textContent = 'Dark';
+            } else {
+                themeIcon.innerHTML = sunIcon;
+                themeText.textContent = 'Light';
             }
         }
 
@@ -424,6 +427,45 @@ class UniversalHeader extends HTMLElement {
         const headerContainer = this.querySelector('header');
         const headerCanvas = this.querySelector('.particle-canvas');
         this._particleCleanup = initializeParticles(headerContainer, headerCanvas);
+
+        // Keep the navigation out of the way while reading, then bring it back
+        // down from above as soon as the visitor reverses direction.
+        let lastScrollY = window.scrollY;
+        let ticking = false;
+        let revealTimer;
+
+        const revealHeader = () => {
+            if (this.classList.contains('scroll-hidden')) {
+                this.classList.remove('scroll-hidden');
+                this.classList.add('scroll-revealing');
+                clearTimeout(revealTimer);
+                revealTimer = setTimeout(() => this.classList.remove('scroll-revealing'), 500);
+            }
+        };
+
+        this._headerScrollHandler = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                const currentScrollY = Math.max(0, window.scrollY);
+                const distance = currentScrollY - lastScrollY;
+                const menuIsOpen = navMenu && navMenu.classList.contains('open');
+
+                if (currentScrollY <= 12) {
+                    revealHeader();
+                } else if (!menuIsOpen && Math.abs(distance) > 6) {
+                    if (distance > 0 && currentScrollY > 110) {
+                        this.classList.add('scroll-hidden');
+                    } else if (distance < 0) {
+                        revealHeader();
+                    }
+                }
+
+                lastScrollY = currentScrollY;
+                ticking = false;
+            });
+        };
+        window.addEventListener('scroll', this._headerScrollHandler, { passive: true });
     }
 
     disconnectedCallback() {
@@ -432,6 +474,9 @@ class UniversalHeader extends HTMLElement {
         }
         if (this._particleCleanup) {
             this._particleCleanup();
+        }
+        if (this._headerScrollHandler) {
+            window.removeEventListener('scroll', this._headerScrollHandler);
         }
     }
 }

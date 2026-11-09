@@ -186,6 +186,15 @@ universal-header {
     z-index: 2000;
     margin: 0;
     padding: 0;
+    transform: translateY(0);
+    transition: transform 0.42s var(--transition-smooth);
+    will-change: transform;
+}
+
+/* Direction-aware navigation: it slides above the viewport on the way down
+   and returns from above when the visitor scrolls back up. */
+universal-header.scroll-hidden {
+    transform: translateY(-105%);
 }
 
 universal-footer {
@@ -306,6 +315,39 @@ header {
     white-space: nowrap;
 }
 
+.logo img {
+    display: block;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    transition: transform 0.45s var(--transition-smooth);
+}
+
+.brand-name {
+    display: inline-block;
+    transform-origin: left center;
+    transition: transform 0.42s var(--transition-smooth), opacity 0.25s ease;
+}
+
+/* On re-entry the mark settles at the left edge first, then the name rolls
+   back into its usual place beside it. */
+universal-header.scroll-revealing .logo img {
+    animation: logo-settle-in 0.48s var(--transition-smooth) both;
+}
+
+universal-header.scroll-revealing .brand-name {
+    animation: brand-roll-back 0.48s var(--transition-smooth) both;
+}
+
+@keyframes logo-settle-in {
+    from { transform: translateX(-18px) rotate(-20deg) scale(0.78); }
+    to { transform: translateX(0) rotate(0) scale(1); }
+}
+
+@keyframes brand-roll-back {
+    from { opacity: 0; transform: translateX(-28px) rotateY(-55deg); }
+    to { opacity: 1; transform: translateX(0) rotateY(0); }
+}
+
 nav ul {
     list-style: none;
     display: flex;
@@ -335,6 +377,14 @@ nav ul li a.active {
     text-shadow: 0 0 10px rgba(0, 168, 255, 0.75), 0 0 20px rgba(0, 168, 255, 0.4);
 }
 
+/* Give the current page the same framed appearance as the theme switcher. */
+nav ul li a.active {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    text-shadow: none;
+}
+
 .theme-toggle-li {
     margin-left: 25px;
     display: flex;
@@ -342,25 +392,69 @@ nav ul li a.active {
 }
 
 .theme-toggle-btn {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0;
+    min-width: 104px;
+    background: transparent;
+    border: 0;
     color: var(--text-light);
     cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
     display: flex;
     align-items: center;
     gap: 6px;
-    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.theme-text {
+    display: inline-block;
+    width: 36px;
+    text-align: left;
 }
 
 .theme-toggle-btn:hover {
+    transform: scale(1.05);
+}
+
+.theme-switch-track {
+    width: 52px;
+    height: 28px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    transition: background 0.85s cubic-bezier(0.45, 0, 0.15, 1), border-color 0.85s cubic-bezier(0.45, 0, 0.15, 1);
+}
+
+.theme-toggle-btn[aria-checked="true"] .theme-switch-track {
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: var(--text-light);
-    transform: scale(1.05);
+}
+
+.theme-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--secondary-color);
+    display: grid;
+    place-items: center;
+    transform: translateX(0);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    will-change: transform;
+    transition: transform 0.85s cubic-bezier(0.45, 0, 0.15, 1), color 0.5s ease-in-out;
+}
+
+.theme-toggle-btn[aria-checked="true"] .theme-icon {
+    transform: translateX(24px);
+    color: var(--primary-color);
+}
+
+.theme-icon svg {
+    width: 12px;
+    height: 12px;
 }
 
 /* Dropdown Menu Interface */
@@ -432,7 +526,12 @@ nav ul li a.active {
    Hero Section
    ========================================== */
 #hero {
-    background: linear-gradient(rgba(15, 32, 39, 0.85), rgba(24, 47, 55, 0.85)), url('image/hero.webp') center/cover no-repeat;
+    /* The hero keeps its dark science-theme appearance in both site modes. */
+    background-color: #0f2027;
+    background-image: linear-gradient(rgba(15, 32, 39, 0.88), rgba(24, 47, 55, 0.9)), url('image/official/hero.webp');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     width: 100%;
     min-height: max(600px, 92dvh);
     padding: clamp(4rem, 8vw, 8rem) 10% clamp(3rem, 6vw, 6rem) 10%;
@@ -2358,9 +2457,9 @@ footer {
     }
 
     .theme-toggle-btn {
-        width: 100%;
+        width: auto;
         justify-content: center;
-        padding: 10px 0;
+        padding: 0;
     }
 
     .dropdown-menu {
