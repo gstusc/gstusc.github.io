@@ -954,7 +954,22 @@ const openImagePreview = (img) => {
     previousBodyOverflow = document.body.style.overflow;
     modalImg.src = img.currentSrc || img.src;
     modalImg.alt = img.alt || 'Full-size image preview';
-    modalCaption.textContent = img.alt || '';
+    const executiveCard = img.closest('.exec-card');
+    const memberName = executiveCard?.querySelector('h3')?.textContent.trim();
+    const designation = executiveCard?.querySelector('.exec-designation')?.textContent.trim();
+
+    if (memberName && designation) {
+        modalCaption.replaceChildren();
+        const name = document.createElement('span');
+        name.className = 'modal-caption-name';
+        name.textContent = memberName;
+        const role = document.createElement('span');
+        role.className = 'modal-caption-designation';
+        role.textContent = designation;
+        modalCaption.append(name, role);
+    } else {
+        modalCaption.textContent = img.alt || '';
+    }
     galleryModal.classList.add('show');
     galleryModal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -2365,7 +2380,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!title || !card || !emptyState) return;
 
+    const event = window.runningEvent;
+    if (event) {
+        title.textContent = event.title || '';
+        const description = document.getElementById('runningEventDescription');
+        const detailsLink = card.querySelector('.feedback-form-link');
+        if (description) description.textContent = event.description || '';
+        if (detailsLink) detailsLink.href = event.detailsUrl || 'events.html';
+    }
+
     const hasRunningEvent = title.textContent.trim().length > 0;
     card.hidden = !hasRunningEvent;
     emptyState.hidden = hasRunningEvent;
+});
+
+// Show the homepage popup whenever a running event is configured.
+document.addEventListener('DOMContentLoaded', () => {
+    const isHomePage = /(?:^|\/)index\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith('/');
+    if (!isHomePage) return;
+
+    const event = window.runningEvent;
+    if (!event?.title?.trim()) return;
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'running-event-popup-backdrop';
+    backdrop.innerHTML = `
+        <section class="running-event-popup" role="dialog" aria-modal="true" aria-labelledby="running-event-popup-title">
+            <button class="running-event-popup-close" type="button" aria-label="Close running event popup">&times;</button>
+            <span class="running-event-popup-status">Happening now</span>
+            <h2 id="running-event-popup-title"></h2>
+            <p></p>
+            <a class="feedback-form-link" target="_blank" rel="noopener noreferrer">View Event Details</a>
+        </section>`;
+
+    backdrop.querySelector('h2').textContent = event.title.trim();
+    backdrop.querySelector('p').textContent = event.description || 'More details about this event will be announced soon.';
+    backdrop.querySelector('a').href = event.detailsUrl || 'events.html';
+
+    const closePopup = () => backdrop.remove();
+    backdrop.querySelector('.running-event-popup-close').addEventListener('click', closePopup);
+    backdrop.addEventListener('click', (clickEvent) => {
+        if (clickEvent.target === backdrop) closePopup();
+    });
+
+    document.body.append(backdrop);
+    backdrop.querySelector('.running-event-popup-close').focus();
 });
