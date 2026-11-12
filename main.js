@@ -1182,6 +1182,9 @@ window.addEventListener('load', () => {
 
         animateHeroStatBoxes();
         startHeroCounters();
+
+        // The preloader fade lasts 600ms; notify overlays only after it is gone.
+        setTimeout(() => window.dispatchEvent(new Event('site:loading-complete')), 600);
     };
 
     if (sessionStorage.getItem('hasSeenLoaderThisSession')) {
@@ -2394,8 +2397,8 @@ document.addEventListener('DOMContentLoaded', () => {
     emptyState.hidden = hasRunningEvent;
 });
 
-// Show the homepage popup whenever a running event is configured.
-document.addEventListener('DOMContentLoaded', () => {
+// Show the homepage popup only after the preloader has finished.
+window.addEventListener('site:loading-complete', () => {
     const isHomePage = /(?:^|\/)index\.html$/i.test(window.location.pathname) || window.location.pathname.endsWith('/');
     if (!isHomePage) return;
 
