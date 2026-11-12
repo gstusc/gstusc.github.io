@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +8,38 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/webp" href="image/official/logo.webp">
 </head>
+
 <body>
 
     <universal-header></universal-header>
 
-    <div class="section-container">
+    <section class="section-container running-event-section reveal-on-scroll" aria-labelledby="running-event-heading">
+        <h2 class="section-title" id="running-event-heading">Running Event</h2>
+        <p class="contact-info-item">Stay informed about the latest event currently happening at GSTU Science Club.</p>
+
+        <div class="running-event-empty" id="runningEventEmpty">
+            <p>No current event is running.</p>
+            <span>Please check back soon for upcoming activities.</span>
+        </div>
+
+        <article class="running-event-card" id="runningEventCard" hidden>
+            <!-- Add the current event title below. Leave it blank when there is no running event. -->
+            <h3 id="runningEventTitle">Member Recruitment 2026</h3>
+            <p id="runningEventDescription">Join GSTU Science Club and become part of an amazing journey of science,
+                discovery, innovation, and endless possibilities. Explore your curiosity, share your ideas, develop new
+                skills, and create unforgettable experiences together.
+
+                Visit the link to learn more and join us!</p>
+            <!-- Add the active event's details URL to href below. -->
+            <a class="feedback-form-link" href="https://www.facebook.com/share/p/1EqohXPtWC/" target="_blank" rel="noopener noreferrer">Show Event Details</a>
+        </article>
+    </section>
+
+    <div class="section-container events-programs-section">
         <h2 class="section-title">Events & Programs</h2>
-        <p class="contact-info-item">Explore the complete lineup of events, workshops, and competitions organized by our team.</p>
-        
+        <p class="contact-info-item">Explore the complete lineup of events, workshops, and competitions organized by our
+            team.</p>
+
         <div class="grid">
             <div class="card reveal-on-scroll">
                 <h3>Science Fest</h3>
@@ -75,43 +100,43 @@
             <div class="card reveal-on-scroll">
                 <h3>Scientific Case Studies</h3>
                 <p>Analyzing real-world engineering failures and breakthroughs to find strategic solutions.</p>
-            </div>     
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Chem Quest</h3>
                 <p>Competitive trivia and challenge event tailored for chemistry enthusiasts.</p>
-            </div> 
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Infographic Competition</h3>
                 <p>Merging data-driven research with high-end graphic design.</p>
-            </div> 
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Scientific Photography Contest</h3>
                 <p>Storytelling through images capturing the beauty of physics and nature.</p>
-            </div> 
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Problem Finding & Solving Competition</h3>
                 <p>Engineering practical solutions for newly identified real-world issues.</p>
-            </div> 
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Prize Giving Ceremony</h3>
                 <p>Grand finale celebrating participants and honoring top innovators with awards.</p>
-            </div>      
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Fresher's Reception</h3>
                 <p>Welcoming new students to the campus community through interactive events.</p>
-            </div>  
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>21st February Essay Competition</h3>
                 <p>Literary contest honoring International Mother Language Day and the 1952 legacy.</p>
-            </div> 
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>21st February Quiz Competition</h3>
                 <p>History-based trivia testing awareness of the language movement struggle.</p>
-            </div>   
+            </div>
             <div class="card reveal-on-scroll">
                 <h3>Article Writing Contest</h3>
                 <p>A competition focused on writing well-researched pieces about modern scientific advancements.</p>
-            </div>                                                                                                     
+            </div>
         </div>
     </div>
 
@@ -119,4 +144,5 @@
 
     <script defer src="main.js"></script>
 </body>
+
 </html>

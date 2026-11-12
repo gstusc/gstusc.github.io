@@ -2356,3 +2356,16 @@ if (sessionStorage.getItem('hasSeenLoaderThisSession')) {
 }
 // Record the start time of the load
 window.loaderStartTime = Date.now();
+
+// The event title in events.html controls whether the running-event card is shown.
+document.addEventListener('DOMContentLoaded', () => {
+    const title = document.getElementById('runningEventTitle');
+    const card = document.getElementById('runningEventCard');
+    const emptyState = document.getElementById('runningEventEmpty');
+
+    if (!title || !card || !emptyState) return;
+
+    const hasRunningEvent = title.textContent.trim().length > 0;
+    card.hidden = !hasRunningEvent;
+    emptyState.hidden = hasRunningEvent;
+});
