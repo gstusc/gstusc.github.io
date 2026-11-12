@@ -528,7 +528,7 @@ nav ul li a.active {
 #hero {
     /* The hero keeps its dark science-theme appearance in both site modes. */
     background-color: #0f2027;
-    background-image: linear-gradient(rgba(15, 32, 39, 0.88), rgba(24, 47, 55, 0.9)), url('image/official/hero.webp');
+    background-image: radial-gradient(circle at 76% 50%, rgba(165, 25, 0, 0.66) 0%, rgba(90, 10, 1, 0.46) 22%, rgba(16, 4, 2, 0.72) 42%, rgba(8, 21, 27, 0.92) 70%), linear-gradient(rgba(15, 32, 39, 0.80), rgba(8, 18, 23, 0.88)), url('image/official/hero.webp');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
@@ -543,6 +543,11 @@ nav ul li a.active {
     color: var(--text-light);
     position: relative;
     overflow: hidden;
+}
+
+/* The atomic scene keeps a cool laboratory palette instead of the sun's red halo. */
+body.atomic-hero-active #hero {
+    background-image: radial-gradient(circle at 76% 50%, rgba(0, 135, 205, 0.26) 0%, rgba(5, 25, 36, 0.70) 40%, rgba(8, 21, 27, 0.92) 70%), linear-gradient(rgba(15, 32, 39, 0.80), rgba(8, 18, 23, 0.88)), url('image/official/hero.webp');
 }
 
 .interactive-glow-title {
@@ -686,7 +691,7 @@ nav ul li a.active {
     box-shadow: 0 4px 12px rgba(0, 168, 255, 0.3);
 }
 
-#atom-canvas {
+#sun-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -823,6 +828,23 @@ nav ul li a.active {
     margin-top: 2rem;
 }
 
+/* Team Division: four cards per row on wide screens. */
+.teams-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+    .teams-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .teams-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .card {
     background: var(--card-bg);
     padding: 2.5rem 2rem;
@@ -830,6 +852,54 @@ nav ul li a.active {
     box-shadow: var(--shadow-sm);
     text-align: center;
     transition: background-color 0.4s var(--transition-smooth), color 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Keep the paired Mission and Vision cards visually balanced. */
+.card.mission-vision-card {
+    min-height: 220px;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.mission-vision-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.core-values-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Match the full content width of the About Club panel. */
+.section-container.core-values-section {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+.card.core-value-card {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+    .mission-vision-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .core-values-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+    .core-values-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 .card h3 {
@@ -3062,20 +3132,10 @@ h2 {
     }
 }
 
-/* Force hide atomic model on mobile screens */
+/* Keep the 3D sun subtle on compact hero layouts. */
 @media (max-width: 850px) {
-    /* Targets any container, canvas, or section housing the model */
-    #canvas-container,
-    #atom-canvas,
-    #atomic-model,
-    #atomic-model-canvas,
-    .atomic-model,
-    .atomic-model-container,
-    .hero-canvas {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
+    #sun-canvas {
+        opacity: 0.5;
     }
 }
 

@@ -1222,8 +1222,14 @@ function createParticleTexture() {
     return new THREE.CanvasTexture(canvas);
 }
 
-// --- THREE.JS ATOM CANVAS INITIALIZATION ---
-const atomCanvas = document.getElementById('atom-canvas');
+// Cycle hero models in a fixed order on every refresh: atom, then sun.
+const previousHeroModel = Number.parseInt(localStorage.getItem('gstu-hero-model-index'), 10);
+const heroModel = Number.isInteger(previousHeroModel) ? (previousHeroModel + 1) % 2 : 0;
+localStorage.setItem('gstu-hero-model-index', String(heroModel));
+const showAtomicModel = heroModel === 0;
+document.body.classList.toggle('atomic-hero-active', showAtomicModel);
+if (showAtomicModel) {
+const atomCanvas = document.getElementById('sun-canvas');
 if (atomCanvas && typeof THREE !== 'undefined') {
     const glowTexture = createGlowTexture();
     const particleTexture = createParticleTexture();
@@ -1290,7 +1296,8 @@ if (atomCanvas && typeof THREE !== 'undefined') {
 
     // Nucleus
     const nucleusGroup = new THREE.Group();
-    const particleGeo = new THREE.SphereGeometry(0.32, 16, 16);
+    const nucleonRadius = 0.25;
+    const particleGeo = new THREE.SphereGeometry(nucleonRadius, 18, 18);
 
     const mat1 = new THREE.MeshStandardMaterial({
         color: 0xee2255,
@@ -1308,27 +1315,34 @@ if (atomCanvas && typeof THREE !== 'undefined') {
         emissiveIntensity: 0.74
     });
 
-    const count = 26;
+    // Rounded close-packed nucleus: one centre particle and irregular shells,
+    // avoiding the visible 3 × 3 × 3 cube formation.
+    const packedPositions = [new THREE.Vector3(0, 0, 0)];
+    const particleSpacing = 0.56;
+    const shellCounts = [8, 18];
+    shellCounts.forEach((shellCount, shell) => {
+        const radius = particleSpacing * (shell + 1);
+        for (let index = 0; index < shellCount; index++) {
+            const y = 1 - (index / (shellCount - 1)) * 2;
+            const ringRadius = Math.sqrt(Math.max(0, 1 - y * y));
+            const theta = Math.PI * (3 - Math.sqrt(5)) * index + shell * 0.47;
+            packedPositions.push(new THREE.Vector3(
+                Math.cos(theta) * ringRadius * radius,
+                y * radius,
+                Math.sin(theta) * ringRadius * radius
+            ));
+        }
+    });
+    const count = packedPositions.length;
     for (let i = 0; i < count; i++) {
         const mesh = new THREE.Mesh(particleGeo, i % 2 === 0 ? mat1 : mat2);
-        const phi = Math.acos(-1 + (2 * i) / count);
-        const theta = Math.sqrt(count * Math.PI) * phi;
-        const r = 0.75;
-
-        mesh.position.set(
-            r * Math.cos(theta) * Math.sin(phi) + (Math.random() - 0.5) * 0.15,
-            r * Math.sin(theta) * Math.sin(phi) + (Math.random() - 0.5) * 0.15,
-            r * Math.cos(phi) + (Math.random() - 0.5) * 0.15
+        mesh.position.copy(packedPositions[i]);
+        mesh.userData.spinSpeed = 0.4 + Math.random() * 0.6;
+        mesh.userData.velocity = new THREE.Vector3(
+            (Math.random() - 0.5) * 0.42,
+            (Math.random() - 0.5) * 0.42,
+            (Math.random() - 0.5) * 0.42
         );
-
-        mesh.userData.radius = mesh.position.length();
-
-        mesh.userData.axis = new THREE.Vector3(
-            Math.random() - 0.5,
-            Math.random() - 0.5,
-            Math.random() - 0.5
-        ).normalize();
-        mesh.userData.speed = 0.4 + Math.random() * 0.6;
 
         nucleusGroup.add(mesh);
     }
@@ -1541,13 +1555,67 @@ if (atomCanvas && typeof THREE !== 'undefined') {
         nucleusGroup.rotation.x = elapsedTime * 0.15;
         nucleusGroup.rotation.y = elapsedTime * 0.2;
 
-        nucleusGroup.children.forEach((child) => {
-            if (child.isMesh && child.userData.axis) {
-                child.position.applyAxisAngle(child.userData.axis, child.userData.speed * delta * 0.5);
+        const nucleons = nucleusGroup.children.filter((child) => child.isMesh && child.userData.velocity);
+        nucleons.forEach((nucleon) => {
+            const { velocity, spinSpeed } = nucleon.userData;
+            // A changing, gentle force keeps the nucleons flowing instead of anchored.
+            velocity.x += Math.sin(elapsedTime * 1.7 + nucleon.id * 1.9) * delta * 0.12;
+            velocity.y += Math.cos(elapsedTime * 1.3 + nucleon.id * 1.4) * delta * 0.12;
+            velocity.z += Math.sin(elapsedTime * 1.5 + nucleon.id * 2.3) * delta * 0.12;
+            velocity.multiplyScalar(Math.pow(0.992, delta * 60));
+            nucleon.position.addScaledVector(velocity, delta);
+            const distanceFromCentre = nucleon.position.length();
+            const nucleusBoundary = 1.25;
+            if (distanceFromCentre > nucleusBoundary) {
+                const inward = nucleon.position.clone().normalize();
+                nucleon.position.copy(inward.multiplyScalar(nucleusBoundary));
+                velocity.addScaledVector(inward, -velocity.dot(inward) * 1.7);
+            }
+            nucleon.rotation.x += spinSpeed * delta;
+            nucleon.rotation.y += spinSpeed * 0.7 * delta;
+        });
 
-                const baseRadius = child.userData.radius;
-                const microPulse = Math.sin(elapsedTime * 1.5 + child.id) * 0.012;
-                child.position.setLength(baseRadius + microPulse);
+        // Resolve sphere-to-sphere collisions several times per frame. This keeps the
+        // moving protons/neutrons solid: they touch and redirect instead of intersecting.
+        const minimumDistance = nucleonRadius * 2;
+        for (let pass = 0; pass < 3; pass++) {
+            for (let a = 0; a < nucleons.length; a++) {
+                for (let b = a + 1; b < nucleons.length; b++) {
+                    const first = nucleons[a], second = nucleons[b];
+                    const separation = second.position.clone().sub(first.position);
+                    const distance = separation.length();
+                    if (distance < minimumDistance) {
+                        const normal = distance > 0.0001 ? separation.multiplyScalar(1 / distance) : new THREE.Vector3(1, 0, 0);
+                        const correction = (minimumDistance - distance) * 0.51;
+                        first.position.addScaledVector(normal, -correction);
+                        second.position.addScaledVector(normal, correction);
+                        const relativeSpeed = second.userData.velocity.clone().sub(first.userData.velocity).dot(normal);
+                        if (relativeSpeed < 0) {
+                            first.userData.velocity.addScaledVector(normal, relativeSpeed * 0.7);
+                            second.userData.velocity.addScaledVector(normal, -relativeSpeed * 0.7);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Keep the nucleus cohesive: each nucleon is gently drawn to its closest
+        // neighbour until their solid surfaces meet, without allowing overlap.
+        nucleons.forEach((nucleon) => {
+            let closest = null;
+            let closestDistance = Infinity;
+            nucleons.forEach((other) => {
+                if (other === nucleon) return;
+                const distance = nucleon.position.distanceTo(other.position);
+                if (distance < closestDistance) {
+                    closest = other;
+                    closestDistance = distance;
+                }
+            });
+            if (closest && closestDistance > minimumDistance) {
+                const towardNeighbour = closest.position.clone().sub(nucleon.position).normalize();
+                const pull = Math.min(closestDistance - minimumDistance, 0.18) * 3.2;
+                nucleon.userData.velocity.addScaledVector(towardNeighbour, pull * delta);
             }
         });
 
@@ -1609,6 +1677,239 @@ if (atomCanvas && typeof THREE !== 'undefined') {
         renderer.setSize(window.innerWidth, window.innerHeight);
         updateCameraView();
     });
+}
+}
+
+// --- THREE.JS PROCEDURAL SUN ---
+const sunCanvas = document.getElementById('sun-canvas');
+if (sunCanvas && heroModel === 1 && typeof THREE !== 'undefined') {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
+    const renderer = new THREE.WebGLRenderer({ canvas: sunCanvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+
+    const sun = new THREE.Group();
+    scene.add(sun);
+
+    const surfaceMaterial = new THREE.ShaderMaterial({
+        uniforms: { time: { value: 0 }, activeDirection: { value: new THREE.Vector3(0, 0, 1) } },
+        vertexShader: `
+            varying vec3 vNormal; varying vec3 vPosition;
+            uniform float time;
+            float hash(vec3 p) { p = fract(p * .3183099 + .1); p *= 17.; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
+            float noise(vec3 p) { vec3 i=floor(p), f=fract(p); f=f*f*(3.-2.*f); return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z); }
+            void main() {
+                vNormal = normal;
+                float ripple = noise(normal * 3.2 + time * .08) * .055 + noise(normal * 9.0 - time * .12) * .018;
+                vec3 p = position + normal * ripple;
+                vPosition = p;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+            }`,
+        fragmentShader: `
+            uniform float time; uniform vec3 activeDirection; varying vec3 vNormal; varying vec3 vPosition;
+            float hash(vec3 p) { p=fract(p*.3183099+.1); p*=17.; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
+            float noise(vec3 p) { vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z); }
+            float fbm(vec3 p) { float n=0.,a=.55; for(int i=0;i<5;i++){n+=a*noise(p);p=p*2.03+3.1;a*=.5;} return n; }
+            void main() {
+                vec3 p = normalize(vPosition);
+                vec3 flow = p * 2.4 + vec3(time*.024, -time*.018, time*.011);
+                float broad = fbm(flow);
+                float granules = fbm(p * 15. - vec3(time*.055, time*.025, 0.));
+                float filaments = fbm(p * 33. + vec3(0., time*.13, 0.));
+                float plasma = smoothstep(.31,.70,broad) + smoothstep(.55,.88,granules)*.42;
+                float brightBeat = .075 * sin(time * 1.35 + broad * 17. + filaments * 9.);
+                float darkBeat = .09 * sin(time * .95 + granules * 14. - broad * 8.);
+                float hotThreads = smoothstep(.69 + brightBeat,.86 + brightBeat, filaments) * smoothstep(.36,.78,broad);
+                vec3 ember = vec3(.10,.001,.0002), red=vec3(.72,.012,.001), orange=vec3(1.,.105,.003), gold=vec3(1.,.62,.055);
+                vec3 color = mix(ember, red, smoothstep(.15,.57,broad));
+                color = mix(color, orange, plasma*.72);
+                float sunspots = smoothstep(.61 + darkBeat, .83 + darkBeat, 1.0 - granules) * smoothstep(.18,.72,broad);
+                color = mix(color, ember * .55, sunspots * (.42 + .34 * sin(time * .95 + filaments * 18.)));
+                float activeRegion = pow(max(0., dot(p, activeDirection)), 24.);
+                float regionA = pow(max(0., dot(p, normalize(vec3(-.32, -.24, .92)))), 38.);
+                float regionB = pow(max(0., dot(p, normalize(vec3(.38, .30, .88)))), 45.);
+                float solarLoops = sin((p.x * 31. + p.y * 19. + filaments * 8.) * 2.2) * .5 + .5;
+                float activeFire = (activeRegion * (.45 + solarLoops) + regionA + regionB) * (0.45 + hotThreads);
+                color = mix(color, gold, hotThreads*.82 + smoothstep(.95,1.22,plasma)*.42 + activeFire*.9);
+                float flarePulse = .68 + .32 * sin(time * 1.7 + filaments * 20. + broad * 11.);
+                color += vec3(1., .15, .002) * activeFire * flarePulse * .62;
+                color *= .78 + granules*.42;
+                float limb = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.,0.,1.))), 2.2);
+                color += orange * limb * .4;
+                gl_FragColor = vec4(color, 1.0);
+            }`
+    });
+    const sphere = new THREE.Mesh(new THREE.SphereGeometry(4.15, 128, 96), surfaceMaterial);
+    sun.add(sphere);
+
+    const corona = new THREE.Mesh(new THREE.SphereGeometry(4.52, 96, 64), new THREE.ShaderMaterial({
+        uniforms: { time: { value: 0 } }, transparent: true, depthWrite: false, side: THREE.BackSide, blending: THREE.AdditiveBlending,
+        vertexShader: 'varying vec3 n; varying vec3 v; void main(){ n=normalize(normalMatrix*normal); v=normalize(-vec3(modelViewMatrix*vec4(position,1.))); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+        fragmentShader: 'uniform float time; varying vec3 n; varying vec3 v; void main(){ float rim=pow(1.-abs(dot(n,v)),2.35); float bands=sin(n.x*42.+sin(n.y*18.+time*1.7)*5.+time*2.); float flicker=.48+.52*smoothstep(-.25,.9,bands); gl_FragColor=vec4(1.,.055,.002,rim*flicker*.62); }'
+    }));
+    sun.add(corona);
+
+    const flarePositions = [];
+    for (let i = 0; i < 110; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const z = (Math.random() - .5) * .45;
+        const r = Math.sqrt(1 - z * z);
+        const direction = new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, z).normalize();
+        const start = direction.clone().multiplyScalar(4.08);
+        const end = direction.clone().multiplyScalar(4.28 + Math.pow(Math.random(), 3) * 1.35);
+        flarePositions.push(start.x,start.y,start.z,end.x,end.y,end.z);
+    }
+    const flareGeometry = new THREE.BufferGeometry();
+    flareGeometry.setAttribute('position', new THREE.Float32BufferAttribute(flarePositions, 3));
+    const flares = new THREE.LineSegments(flareGeometry, new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        vertexShader: `
+            varying float vOuterFade;
+            void main() {
+                // Each flare begins at the photosphere and becomes transparent beyond it.
+                vOuterFade = 1.0 - smoothstep(4.06, 5.62, length(position));
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }`,
+        fragmentShader: `
+            varying float vOuterFade;
+            void main() {
+                gl_FragColor = vec4(1.0, 0.11, 0.004, vOuterFade * 0.76);
+            }`
+    }));
+    sun.add(flares);
+    const baseFlarePositions = flarePositions.slice();
+
+    // Broken, close-fitting rings read as magnetic plasma paths rather than geometric orbit lines.
+    const plasmaRings = [];
+    [[0.22, 0.10, 0.16], [-0.35, 0.42, -0.28], [0.58, -0.18, 0.32]].forEach((tilt, index) => {
+        const ringPoints = [];
+        const segments = 180;
+        for (let point = 0; point <= segments; point++) {
+            const angle = point / segments * Math.PI * 2;
+            const turbulence = Math.sin(angle * 7 + index * 2.1) * .11 + Math.sin(angle * 15 - index) * .045;
+            const radius = 4.38 + turbulence;
+            ringPoints.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius * .94, Math.sin(angle * 3 + index) * .1));
+        }
+        const ring = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPoints), new THREE.LineBasicMaterial({
+            color: index === 1 ? 0xff3b05 : 0xff9410, transparent: true, opacity: .23,
+            blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        ring.rotation.set(tilt[0], tilt[1], tilt[2]);
+        sun.add(ring); plasmaRings.push(ring);
+    });
+
+    const glowCanvas = document.createElement('canvas'); glowCanvas.width = glowCanvas.height = 128;
+    const glowContext = glowCanvas.getContext('2d'); const gradient = glowContext.createRadialGradient(64,64,0,64,64,64);
+    gradient.addColorStop(0,'rgba(255,190,50,.6)'); gradient.addColorStop(.25,'rgba(255,65,0,.22)'); gradient.addColorStop(1,'rgba(255,20,0,0)');
+    glowContext.fillStyle=gradient; glowContext.fillRect(0,0,128,128);
+    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(glowCanvas), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: .85 }));
+    halo.scale.set(15,15,1); halo.position.z=-.7; sun.add(halo);
+
+    // Distant stars and tiny planet lights create depth behind the solar model.
+    const starCanvas = document.createElement('canvas'); starCanvas.width = starCanvas.height = 64;
+    const starContext = starCanvas.getContext('2d'); const starGlow = starContext.createRadialGradient(32, 32, 0, 32, 32, 32);
+    starGlow.addColorStop(0, 'rgba(255,255,255,1)'); starGlow.addColorStop(.16, 'rgba(255,220,155,.95)'); starGlow.addColorStop(.48, 'rgba(255,130,55,.18)'); starGlow.addColorStop(1, 'rgba(255,90,10,0)');
+    starContext.fillStyle = starGlow; starContext.fillRect(0, 0, 64, 64);
+    const starTexture = new THREE.CanvasTexture(starCanvas);
+    const space = new THREE.Group(); scene.add(space);
+    const starCount = 190, starPositions = new Float32Array(starCount * 3), starColors = new Float32Array(starCount * 3);
+    const starPalette = [new THREE.Color(0xfff0c2), new THREE.Color(0xff9c78), new THREE.Color(0xffd4a0)];
+    for (let i = 0; i < starCount; i++) {
+        const x = (Math.random() - .5) * 36, y = (Math.random() - .5) * 22;
+        starPositions.set([x, y, -9 - Math.random() * 7], i * 3);
+        const color = starPalette[Math.floor(Math.random() * starPalette.length)];
+        starColors.set([color.r, color.g, color.b], i * 3);
+    }
+    const starGeometry = new THREE.BufferGeometry();
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ map: starTexture, size: .18, vertexColors: true, transparent: true, opacity: .7, depthWrite: false, blending: THREE.AdditiveBlending }));
+    space.add(stars);
+    const backgroundPlanets = new THREE.Group(); space.add(backgroundPlanets);
+    [[-10, 4.4, -7, .22, 0x6389b8], [-6.8, -4.2, -8, .68, 0xf04722], [9.4, 3.7, -9, .24, 0xdc3a20], [5.2, -4.6, -8, .16, 0xb82d1d], [11, -3.8, -9, .25, 0x62857a], [13.2, 5.4, -8, .14, 0xc29d5a], [-14, -1.4, -9, .12, 0x7c6aa8]].forEach(([x, y, z, size, color]) => {
+        const planet = new THREE.Sprite(new THREE.SpriteMaterial({ map: starTexture, color, transparent: true, opacity: .8, depthWrite: false, blending: THREE.AdditiveBlending }));
+        planet.position.set(x, y, z); planet.scale.set(size * 5, size * 5, 1); backgroundPlanets.add(planet);
+    });
+
+    let mouseX = 0, mouseY = 0, pointerEnergy = 0;
+    const hero = document.getElementById('hero');
+    hero.addEventListener('mousemove', (event) => {
+        const rect=hero.getBoundingClientRect();
+        mouseX=((event.clientX-rect.left)/rect.width-.5); mouseY=((event.clientY-rect.top)/rect.height-.5);
+        pointerEnergy = 1;
+    });
+    hero.addEventListener('mouseleave', () => { mouseX=0; mouseY=0; pointerEnergy=0; });
+    const clock = new THREE.Clock();
+    let autoRotation = 0;
+    function resizeSun() {
+        const rect = hero.getBoundingClientRect(), mobile = window.innerWidth < 850;
+        renderer.setSize(rect.width, rect.height, false); camera.aspect=rect.width/rect.height;
+        camera.position.set(0,0,22); sun.position.set(mobile ? 0 : 6.65, mobile ? -.4 : 0, 0); sun.scale.setScalar(mobile ? .78 : 1.08);
+        camera.updateProjectionMatrix();
+    }
+    function animateSun() {
+        requestAnimationFrame(animateSun); const t=clock.getElapsedTime();
+        surfaceMaterial.uniforms.time.value=t; corona.material.uniforms.time.value=t;
+        pointerEnergy += (Math.min(1, Math.abs(mouseX) + Math.abs(mouseY)) - pointerEnergy) * .05;
+        const activeDirection = new THREE.Vector3(mouseX * 1.15, -mouseY * 1.15, 1).normalize();
+        surfaceMaterial.uniforms.activeDirection.value.lerp(activeDirection, .16);
+        autoRotation += .0028;
+        sun.rotation.y += (autoRotation + mouseX * 1.22 - sun.rotation.y) * .12;
+        sun.rotation.x += (-mouseY * .92 - sun.rotation.x) * .12;
+        sun.rotation.z += (mouseX * .24 - sun.rotation.z) * .09;
+        flares.rotation.y += (mouseX * .95 + t*.035 - flares.rotation.y) * .10;
+        flares.rotation.x += (-mouseY * .72 - flares.rotation.x) * .12;
+        const flareAttribute = flareGeometry.attributes.position;
+        for (let i = 0; i < flarePositions.length; i += 6) {
+            const directionX = baseFlarePositions[i + 3], directionY = baseFlarePositions[i + 4], directionZ = baseFlarePositions[i + 5];
+            const facingPointer = Math.max(0, directionX * mouseX * .8 - directionY * mouseY * .8 + directionZ * .34);
+            const pulse = 1 + (facingPointer * pointerEnergy + Math.sin(t * 3.2 + i) * .08) * .28;
+            flareAttribute.array[i + 3] = directionX * pulse;
+            flareAttribute.array[i + 4] = directionY * pulse;
+            flareAttribute.array[i + 5] = directionZ * pulse;
+        }
+        flareAttribute.needsUpdate = true;
+        plasmaRings.forEach((ring, index) => {
+            ring.rotation.z += .0007 * (index + 1) + mouseX * .0009;
+            ring.rotation.x += (-mouseY * .24 - ring.rotation.x * .02) * .075;
+        });
+        space.rotation.y += (mouseX * .045 - space.rotation.y) * .02;
+        space.rotation.x += (-mouseY * .03 - space.rotation.x) * .02;
+        backgroundPlanets.rotation.y += .00055;
+        backgroundPlanets.rotation.z = Math.sin(t * .16) * .025;
+        halo.material.opacity=.74+Math.sin(t*1.8)*.1 + pointerEnergy*.08;
+        renderer.render(scene,camera);
+    }
+    resizeSun(); animateSun(); window.addEventListener('resize',resizeSun);
+}
+
+// Retired black-hole experiment (not loaded or included in hero rotation).
+if (false && sunCanvas && typeof THREE !== 'undefined') {
+    const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(35, 1, .1, 100);
+    const renderer = new THREE.WebGLRenderer({ canvas: sunCanvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+    const hole = new THREE.Group(); scene.add(hole);
+    hole.add(new THREE.Mesh(new THREE.SphereGeometry(2.25,80,64),new THREE.MeshBasicMaterial({color:0x010306})));
+    hole.add(new THREE.Mesh(new THREE.SphereGeometry(2.43,80,64),new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.BackSide,blending:THREE.AdditiveBlending,vertexShader:'varying vec3 n;varying vec3 v;void main(){n=normalize(normalMatrix*normal);v=normalize(-vec3(modelViewMatrix*vec4(position,1.)));gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec3 n;varying vec3 v;void main(){float r=pow(1.-abs(dot(n,v)),4.);gl_FragColor=vec4(.12,.72,1.,r*.72);}'})));
+    const disk = new THREE.Mesh(new THREE.RingGeometry(2.32,7.15,256,12),new THREE.ShaderMaterial({uniforms:{time:{value:0},pointer:{value:0}},transparent:true,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending,vertexShader:'varying float r;varying float a;uniform float time;void main(){r=length(position.xy);a=atan(position.y,position.x);vec3 p=position;p.z+=sin(a*9.+time*2.)*.08*(1.-smoothstep(2.3,7.1,r));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}',fragmentShader:'uniform float time;uniform float pointer;varying float r;varying float a;void main(){float edge=smoothstep(2.32,2.75,r)*(1.-smoothstep(5.,7.15,r));float stripe=.42+.58*sin(a*36.-r*10.+time*4.+sin(a*7.)*3.);float f=smoothstep(.35,.9,stripe);vec3 c=mix(vec3(.015,.16,.29),vec3(.35,.9,1.),f);c+=vec3(.18,.65,1.)*pointer*.25;gl_FragColor=vec4(c,edge*(.16+.72*f));}'}));
+    disk.rotation.x=1.22; hole.add(disk);
+    const rings=new THREE.Group(); hole.add(rings);
+    [2.62,2.86,3.16].forEach((radius,index)=>{const ring=new THREE.Mesh(new THREE.TorusGeometry(radius,.018+index*.011,10,180),new THREE.MeshBasicMaterial({color:index===0?0xd5f8ff:0x3baee8,transparent:true,opacity:.65-index*.15,blending:THREE.AdditiveBlending,depthWrite:false}));ring.scale.y=1.2;rings.add(ring);});
+    const starsGeo=new THREE.BufferGeometry(), count=175, positions=new Float32Array(count*3), colors=new Float32Array(count*3);
+    for(let i=0;i<count;i++){positions.set([(Math.random()-.5)*35,(Math.random()-.5)*22,-8-Math.random()*6],i*3);const c=.45+Math.random()*.45;colors.set([c,c*.9,1],i*3);} starsGeo.setAttribute('position',new THREE.BufferAttribute(positions,3));starsGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
+    const stars=new THREE.Points(starsGeo,new THREE.PointsMaterial({size:.09,vertexColors:true,transparent:true,opacity:.72,depthWrite:false}));scene.add(stars);
+    [[-11,4,-7,.22,0xe04c45],[10,-3,-8,.17,0x6289d6],[-14,-4,-9,.13,0xd0a05a]].forEach(([x,y,z,size,color])=>{const planet=new THREE.Mesh(new THREE.SphereGeometry(size,16,16),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.8}));planet.position.set(x,y,z);scene.add(planet);});
+    let mouseX=0,mouseY=0,spin=0; const hero=document.getElementById('hero'),clock=new THREE.Clock();
+    hero.addEventListener('mousemove',event=>{const rect=hero.getBoundingClientRect();mouseX=(event.clientX-rect.left)/rect.width-.5;mouseY=(event.clientY-rect.top)/rect.height-.5;});hero.addEventListener('mouseleave',()=>{mouseX=0;mouseY=0;});
+    function resizeHole(){const rect=hero.getBoundingClientRect(),mobile=window.innerWidth<850;renderer.setSize(rect.width,rect.height,false);camera.aspect=rect.width/rect.height;camera.position.set(0,0,22);hole.position.set(mobile?0:6.45,mobile?-.35:0,0);hole.scale.setScalar(mobile?.8:1.08);camera.updateProjectionMatrix();}
+    function animateHole(){requestAnimationFrame(animateHole);const time=clock.getElapsedTime();spin+=.0027;disk.material.uniforms.time.value=time;disk.material.uniforms.pointer.value=Math.min(1,Math.abs(mouseX)+Math.abs(mouseY));hole.rotation.y+=(spin+mouseX*1.25-hole.rotation.y)*.12;hole.rotation.x+=(-mouseY*.82-hole.rotation.x)*.12;hole.rotation.z+=(mouseX*.2-hole.rotation.z)*.08;disk.rotation.z+=.01+mouseX*.012;rings.rotation.y+=(mouseX*.4-rings.rotation.y)*.08;rings.rotation.x+=(-mouseY*.26-rings.rotation.x)*.08;stars.rotation.y+=(mouseX*.035-stars.rotation.y)*.015;renderer.render(scene,camera);}
+    resizeHole();animateHole();window.addEventListener('resize',resizeHole);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
