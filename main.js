@@ -1315,6 +1315,7 @@ if (atomCanvas && typeof THREE !== 'undefined') {
     // Nucleus
     const nucleusGroup = new THREE.Group();
     const nucleonRadius = 0.25;
+    const nucleusBoundary = 1.25;
     const particleGeo = new THREE.SphereGeometry(nucleonRadius, 18, 18);
 
     const mat1 = new THREE.MeshStandardMaterial({
@@ -1552,9 +1553,26 @@ if (atomCanvas && typeof THREE !== 'undefined') {
 
     const clock = new THREE.Clock();
 
+    function keepNucleonInsideNucleus(nucleon) {
+        const distanceFromCentre = nucleon.position.length();
+        if (distanceFromCentre <= nucleusBoundary) return;
+
+        const outward = nucleon.position.clone().multiplyScalar(1 / distanceFromCentre);
+        nucleon.position.copy(outward).multiplyScalar(nucleusBoundary);
+
+        // Remove only the outward velocity so a boundary correction never turns
+        // into a high-speed bounce on the next frame.
+        const outwardSpeed = nucleon.userData.velocity.dot(outward);
+        if (outwardSpeed > 0) {
+            nucleon.userData.velocity.addScaledVector(outward, -outwardSpeed);
+        }
+    }
+
     function animate() {
         requestAnimationFrame(animate);
-        const delta = clock.getDelta();
+        // Browser throttling can produce a very large frame gap. Limiting the
+        // physics step prevents nucleons from jumping through the nucleus.
+        const delta = Math.min(clock.getDelta(), 1 / 30);
         const elapsedTime = clock.getElapsedTime();
 
         // Model rotation
@@ -1582,13 +1600,7 @@ if (atomCanvas && typeof THREE !== 'undefined') {
             velocity.z += Math.sin(elapsedTime * 1.5 + nucleon.id * 2.3) * delta * 0.12;
             velocity.multiplyScalar(Math.pow(0.992, delta * 60));
             nucleon.position.addScaledVector(velocity, delta);
-            const distanceFromCentre = nucleon.position.length();
-            const nucleusBoundary = 1.25;
-            if (distanceFromCentre > nucleusBoundary) {
-                const inward = nucleon.position.clone().normalize();
-                nucleon.position.copy(inward.multiplyScalar(nucleusBoundary));
-                velocity.addScaledVector(inward, -velocity.dot(inward) * 1.7);
-            }
+            keepNucleonInsideNucleus(nucleon);
             nucleon.rotation.x += spinSpeed * delta;
             nucleon.rotation.y += spinSpeed * 0.7 * delta;
         });
@@ -1616,6 +1628,10 @@ if (atomCanvas && typeof THREE !== 'undefined') {
                 }
             }
         }
+
+        // Collision separation happens after the first containment pass and can
+        // otherwise leave an outer nucleon outside the nucleus for a frame.
+        nucleons.forEach(keepNucleonInsideNucleus);
 
         // Keep the nucleus cohesive: each nucleon is gently drawn to its closest
         // neighbour until their solid surfaces meet, without allowing overlap.
