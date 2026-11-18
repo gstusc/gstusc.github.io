@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const certificateFaculty = document.getElementById('certificateFaculty');
     const certificateClubId = document.getElementById('certificateClubId');
     const closeCertificate = document.getElementById('closeCertificate');
+    let activeCertificateMember = null;
 
     // One certificate design is shared by every member, regardless of batch.
     const certificateTemplate = {
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         positions: { name: '38.8%', department: '47.2%', faculty: '47.2%', clubId: '47.2%' }
     };
 
-    const showCertificate = (member) => {
+    const populateCertificate = (member) => {
         certificateTemplateImage.src = certificateTemplate.file;
         certificateFields.style.setProperty('--certificate-name-top', certificateTemplate.positions.name);
         certificateFields.style.setProperty('--certificate-department-top', certificateTemplate.positions.department);
@@ -33,6 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         certificateFaculty.textContent = (member.faculty || '').replace(/^Faculty of\s+/i, '');
         certificateClubId.textContent = member.clubId || '';
+    };
+
+    const showCertificate = (member) => {
+        activeCertificateMember = member;
+        populateCertificate(member);
         certificateOverlay.classList.add('is-open');
         certificateOverlay.setAttribute('aria-hidden', 'false');
         document.body.classList.add('certificate-open');
@@ -47,9 +53,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeCertificate.addEventListener('click', hideCertificate);
     document.getElementById('printCertificate').addEventListener('click', async () => {
-        // Keep the downloaded PDF consistent with the preview by waiting for
-        // the Allura web font before the browser snapshots the page.
+        // Reapply the selected record immediately before printing. This avoids
+        // a blank certificate when a browser snapshots a stale overlay state.
+        if (!activeCertificateMember) return;
+        populateCertificate(activeCertificateMember);
+
+        // Wait for the certificate artwork, web font, and one completed paint
+        // before the browser creates the PDF/print snapshot.
+        if (certificateTemplateImage.decode) {
+            await certificateTemplateImage.decode().catch(() => {});
+        }
         if (document.fonts?.ready) await document.fonts.ready;
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         window.print();
     });
     certificateOverlay.addEventListener('click', (event) => {
@@ -896,9 +911,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultsFragment.appendChild(card);
                 });
                 resultsContainer.appendChild(resultsFragment);
-                resultsContainer.querySelectorAll('.certificate-card-button').forEach(button => {
-                    const member = matches[Array.from(resultsContainer.querySelectorAll('.certificate-card-button')).indexOf(button)];
-                    button.addEventListener('click', () => showCertificate(member));
+                resultsContainer.querySelectorAll('.certificate-card-button').forEach((button, index) => {
+                    button.addEventListener('click', () => showCertificate(matches[index]));
                 });
 
                 // Keep broad searches contained to a three-card viewport so the
