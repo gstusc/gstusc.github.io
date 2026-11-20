@@ -4,15 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsContainer = document.getElementById('searchResultsContainer');
     const resultCountBox = document.getElementById('searchResultCount');
     const notFoundBox = document.getElementById('membershipNotFound');
-    const certificateOverlay = document.getElementById('certificateOverlay');
     const certificateTemplateImage = document.getElementById('certificateTemplate');
     const certificateFields = document.getElementById('certificateFields');
     const certificateName = document.getElementById('certificateName');
     const certificateDepartment = document.getElementById('certificateDepartment');
     const certificateFaculty = document.getElementById('certificateFaculty');
     const certificateClubId = document.getElementById('certificateClubId');
-    const closeCertificate = document.getElementById('closeCertificate');
-    let activeCertificateMember = null;
 
     // One certificate design is shared by every member, regardless of batch.
     const certificateTemplate = {
@@ -36,27 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
         certificateClubId.textContent = member.clubId || '';
     };
 
-    const showCertificate = (member) => {
-        activeCertificateMember = member;
+    const printCertificate = async (member) => {
         populateCertificate(member);
-        certificateOverlay.classList.add('is-open');
-        certificateOverlay.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('certificate-open');
-        closeCertificate.focus();
-    };
-
-    const hideCertificate = () => {
-        certificateOverlay.classList.remove('is-open');
-        certificateOverlay.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('certificate-open');
-    };
-
-    closeCertificate.addEventListener('click', hideCertificate);
-    document.getElementById('printCertificate').addEventListener('click', async () => {
-        // Reapply the selected record immediately before printing. This avoids
-        // a blank certificate when a browser snapshots a stale overlay state.
-        if (!activeCertificateMember) return;
-        populateCertificate(activeCertificateMember);
 
         // Wait for the certificate artwork, web font, and one completed paint
         // before the browser creates the PDF/print snapshot.
@@ -66,13 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.fonts?.ready) await document.fonts.ready;
         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         window.print();
-    });
-    certificateOverlay.addEventListener('click', (event) => {
-        if (event.target === certificateOverlay) hideCertificate();
-    });
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && certificateOverlay.classList.contains('is-open')) hideCertificate();
-    });
+    };
 
     // Size the scroll area from the rendered cards rather than using a fixed
     // pixel height, so exactly three results remain visible at every breakpoint.
@@ -912,7 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 resultsContainer.appendChild(resultsFragment);
                 resultsContainer.querySelectorAll('.certificate-card-button').forEach((button, index) => {
-                    button.addEventListener('click', () => showCertificate(matches[index]));
+                    button.addEventListener('click', () => printCertificate(matches[index]));
                 });
 
                 // Keep broad searches contained to a three-card viewport so the

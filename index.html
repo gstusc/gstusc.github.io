@@ -736,17 +736,11 @@
         </div>
     </div>
 
-    <div class="certificate-overlay" id="certificateOverlay" aria-hidden="true" role="dialog" aria-modal="true"
-        aria-labelledby="certificateTitle">
+    <div class="certificate-overlay" id="certificateOverlay" aria-hidden="true">
         <div class="certificate-dialog">
-            <div class="certificate-actions no-print">
-                <button type="button" class="certificate-print" id="printCertificate">Print certificate</button>
-                <button type="button" class="certificate-close" id="closeCertificate"
-                    aria-label="Close certificate preview">&times;</button>
-            </div>
             <article class="certificate-page" id="certificatePage">
                 <img class="certificate-template" id="certificateTemplate" src="image/official/Certificate.jpg"
-                    alt="Membership certificate template">
+                    alt="Membership certificate template" draggable="false">
                 <div class="certificate-fields" id="certificateFields" aria-labelledby="certificateTitle">
                     <span class="certificate-field certificate-field-name" id="certificateName"></span>
                     <span class="certificate-field certificate-field-department" id="certificateDepartment"></span>
